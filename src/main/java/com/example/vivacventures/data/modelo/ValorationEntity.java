@@ -7,15 +7,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "valoracion")
-public class ValoracionEntity {
+@Table(name = "valoration")
+public class ValorationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
     @Column(name = "username",nullable = false)
     private String username;
-    @Column
-    private int lugarId;
-
+    @Column(name = "place_id")
+    private int placeId;
+    @Column(name = "puntuation")
+    private int puntuation;
+    @Column(name = "review")
+    private String review;
 }
