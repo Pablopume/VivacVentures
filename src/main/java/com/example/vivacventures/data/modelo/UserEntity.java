@@ -1,13 +1,17 @@
 package com.example.vivacventures.data.modelo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "user")
 public class UserEntity {
     @Id
@@ -22,6 +26,6 @@ public class UserEntity {
     @Column(name = "rol")
     private String rol;
     @Column(name = "valorations")
-    @OneToMany(mappedBy = "username")
+    @OneToMany(mappedBy = "userEntity")
     private List<ValorationEntity> valorations;
 }
