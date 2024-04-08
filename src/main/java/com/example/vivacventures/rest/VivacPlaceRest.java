@@ -1,4 +1,4 @@
-package com.example.vivacventures.data.rest;
+package com.example.vivacventures.rest;
 
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.servicios.VivacPlaceService;
@@ -21,5 +21,9 @@ public class VivacPlaceRest {
     @GetMapping("/type")
     public List<VivacPlace> getVivacPlaceByType(@RequestParam("type") String type) {
         return vivacPlaceService.getVivacPlaceByType(type);
+    }
+    @GetMapping("/nearby")
+    public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
+        return vivacPlaceService.getVivacByLatitudeAndLongitude(latitude, longitude);
     }
 }

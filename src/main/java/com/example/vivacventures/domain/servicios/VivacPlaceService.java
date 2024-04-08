@@ -21,6 +21,10 @@ public class VivacPlaceService {
         return vivacPlaceEntities.stream().map(vivacEntityMapper::toVivacPlace).toList();
     }
 
+    public List<VivacPlace> getVivacByLatitudeAndLongitude(double userLatitude, double userLongitude) {
+        List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.findNearbyPlaces(userLatitude, userLongitude);
+        return vivacPlaceEntities.stream().map(vivacEntityMapper::toVivacPlace).toList();
+    }
 
 
     public List<VivacPlace> getVivacPlaces() {

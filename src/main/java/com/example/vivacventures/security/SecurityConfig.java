@@ -1,4 +1,4 @@
-package com.example.vivacventures.data.security;
+package com.example.vivacventures.security;
 
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/vivacplaces").
-                                permitAll().requestMatchers("/type").permitAll()
+                                permitAll().requestMatchers("/type").permitAll().requestMatchers("/nearby").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
 
