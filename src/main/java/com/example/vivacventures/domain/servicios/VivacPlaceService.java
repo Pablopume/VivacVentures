@@ -17,13 +17,13 @@ public class VivacPlaceService {
     private final VivacEntityMapper vivacEntityMapper;
 
     public List<VivacPlace> getVivacPlaceByType(String type) {
-        List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.findByType(type);
-        return vivacPlaceEntities.stream().map(vivacEntityMapper::toVivacPlace).collect(Collectors.toList());
+        List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.getVivacByType(type);
+        return vivacPlaceEntities.stream().map(vivacEntityMapper::toVivacPlace).toList();
     }
 
 
 
     public List<VivacPlace> getVivacPlaces() {
-        return vivacPlaceRepository.findAll().stream().map(vivacEntityMapper::toVivacPlace).collect(Collectors.toList());
+        return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(vivacEntityMapper::toVivacPlace).toList();
     }
 }
