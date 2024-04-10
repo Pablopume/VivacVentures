@@ -30,4 +30,8 @@ public class VivacPlaceService {
     public List<VivacPlace> getVivacPlaces() {
         return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(vivacEntityMapper::toVivacPlace).toList();
     }
+
+    public VivacPlace getVivacPlaceById(int id) {
+        return vivacEntityMapper.toVivacPlace(vivacPlaceRepository.getVivacPlaceEntitiesById(id));
+    }
 }

@@ -29,6 +29,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/vivacplaces").
                                 permitAll().requestMatchers("/type").permitAll().requestMatchers("/nearby").permitAll()
+                                .requestMatchers("/vivacplaces/{id}").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
 

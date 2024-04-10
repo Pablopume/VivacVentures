@@ -17,6 +17,8 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
     @Query("SELECT v FROM VivacPlaceEntity v JOIN FETCH v.valorations WHERE (6371 * acos(cos(radians(:userLatitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:userLongitude)) + sin(radians(:userLatitude)) * sin(radians(v.latitude)))) <= 2 ")
     List<VivacPlaceEntity> findNearbyPlaces(@PathParam("userLatitude") double userLatitude, @PathParam("userLongitude") double userLongitude);
 
+    @Query("SELECT v FROM VivacPlaceEntity v LEFT JOIN FETCH v.valorations WHERE v.id = ?1")
+    VivacPlaceEntity getVivacPlaceEntitiesById(int id);
 
 }
 
