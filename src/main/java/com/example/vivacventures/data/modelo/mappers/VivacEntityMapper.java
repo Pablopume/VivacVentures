@@ -8,4 +8,5 @@ import org.mapstruct.Mapper;
 public interface VivacEntityMapper {
     VivacPlace toVivacPlace(VivacPlaceEntity vivacPlaceEntity);
     VivacPlaceEntity toVivacPlaceEntity(VivacPlace vivacPlace);
+
 }

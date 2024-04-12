@@ -21,4 +21,5 @@ public class VivacPlace {
     private String date;
     private List<Valoration> valorations;
     private String type;
+
 }
