@@ -30,6 +30,8 @@ public class SecurityConfig {
                                 .requestMatchers("/vivacplaces").
                                 permitAll().requestMatchers("/type").permitAll().requestMatchers("/nearby").permitAll()
                                 .requestMatchers("/vivacplaces/{id}").permitAll()
+                                .requestMatchers("/vivacplace").permitAll()
+                                .requestMatchers("/{type}").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
 
