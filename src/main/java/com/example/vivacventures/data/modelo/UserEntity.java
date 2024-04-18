@@ -25,6 +25,10 @@ public class UserEntity {
     private String email;
     @Column(name = "rol")
     private String rol;
+    @Column(name = "verified")
+    private boolean verified;
+    @Column(name = "random_string_verified")
+    private String randomStringVerified;
     @Column(name = "valorations")
     @OneToMany(mappedBy = "userEntity")
     private List<ValorationEntity> valorations;
