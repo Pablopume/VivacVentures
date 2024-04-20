@@ -1,4 +1,4 @@
-package com.example.vivacventures.rest;
+package com.example.vivacventures.ui.rest;
 
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.servicios.VivacPlaceService;

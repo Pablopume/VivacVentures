@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Getter
 @Setter
@@ -27,7 +28,9 @@ public class UserEntity {
     private String rol;
     @Column(name = "verified")
     private boolean verified;
-    @Column(name = "random_string_verified")
+    @Column(name = "verification_expiration_date")
+    private LocalDateTime verificationExpirationDate;
+    @Column(name = "random_string_verified", length = 255)
     private String randomStringVerified;
     @Column(name = "valorations")
     @OneToMany(mappedBy = "userEntity")

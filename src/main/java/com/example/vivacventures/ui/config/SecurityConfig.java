@@ -1,4 +1,4 @@
-package com.example.vivacventures.security;
+package com.example.vivacventures.ui.config;
 
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 .requestMatchers("/vivacplaces/{id}").permitAll()
                                 .requestMatchers("/vivacplace").permitAll()
                                 .requestMatchers("/{type}").permitAll()
+                                .requestMatchers("/auth/*").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
 
