@@ -22,7 +22,7 @@ public class UserEntity {
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
     @Column(name = "rol")
     private String rol;
@@ -35,4 +35,6 @@ public class UserEntity {
     @Column(name = "valorations")
     @OneToMany(mappedBy = "userEntity")
     private List<ValorationEntity> valorations;
+    @Column(name = "temporalPassword")
+    private String temporalPassword;
 }

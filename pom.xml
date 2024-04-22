@@ -83,13 +83,22 @@
             <scope>test</scope>
         </dependency>
 
-<!--        Libreria para generar String aleatorio-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.14.0</version>
-        </dependency>
 
+        <!-- Jersey (JAX-RS implementation) for returning status-->
+
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+
+
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
+            <version>10.0.0</version>
+            <scope>provided</scope>
+        </dependency>
 <!--        Mandar mail-->
         <dependency>
             <groupId>jakarta.mail</groupId>

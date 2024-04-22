@@ -17,8 +17,6 @@ public class ValorationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-
-
     @Column(name = "score")
     private int score;
     @Column(name = "review")

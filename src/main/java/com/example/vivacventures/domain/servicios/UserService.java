@@ -9,9 +9,10 @@ import com.example.vivacventures.domain.common.Config;
 import com.example.vivacventures.domain.common.DomainConstants;
 import com.example.vivacventures.domain.modelo.User;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
-import com.example.vivacventures.domain.modelo.exceptions.Exception401;
+import com.example.vivacventures.domain.modelo.exceptions.*;
 import com.example.vivacventures.security.KeyProvider;
 import com.example.vivacventures.util.JwtTokenUtil;
+import com.example.vivacventures.util.Utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -25,15 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.RandomStringUtils;
-
-import java.io.FileInputStream;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
@@ -45,8 +38,7 @@ public class UserService {
     private final UserEntityMapper userEntityMapper;
     private final PasswordEncoder passwordEncoder;
     private final KeyProvider keyProvider;
-    private final Config config;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final Utils utils;
     private final MandarMail mandarMail;
     private final AuthenticationManager authenticationManager;
     @Value(Constantes.APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION)
@@ -74,37 +66,66 @@ public class UserService {
         }
         //nunca va a llegar aquí ya que si no se autentica lanza la excepcion de hibernate, por eso devuelvo un null
         else {
-            return null;
+            throw new NotVerificatedException("Usuario o contraseña incorrectos");
         }
     }
 
+    public void changePassword(String email, String newPassword, String temporalPaswword) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (!passwordEncoder.matches(temporalPaswword, user.getTemporalPassword())) {
+            throw new BadPasswordException("Contraseña temporal incorrecta");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setTemporalPassword(null);
+        userRepository.save(user);
+    }
+
+    public void forgotPassword(String email) {
+        String randomString = Utils.randomBytes();
+        UserEntity user = userRepository.findByEmail(email);
+        try {
+            mandarMail.generateAndSendEmail(email, "Su nueva contraseña temporal es: " + randomString, "VivacVentures. Nueva contraseña temporal");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+            user.setTemporalPassword(passwordEncoder.encode(randomString));
+            userRepository.save(user);
+    }
 
     public boolean register(UserRegisterDTO userRegisterDTO) {
+        if (userRegisterDTO.getEmail() == null || !userRegisterDTO.getEmail().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+            throw new MailIncorrectoException("Email incorrecto");
+        }
         UserEntity userEntity = userEntityMapper.toUserEntity(userRegisterDTO);
         UserEntity usuarioRepetido = userRepository.findByUsername(userRegisterDTO.getUsername());
+        UserEntity emailRepetido = userRepository.findByEmail(userRegisterDTO.getEmail());
 
-        if (usuarioRepetido == null) {
-            String randomString = UUID.randomUUID().toString();
-            userEntity.setRol("USER");
-            userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-            userEntity.setRandomStringVerified(randomString);
-            userEntity.setVerificationExpirationDate(LocalDateTime.now());
+        if (usuarioRepetido == null ) {
+            if (emailRepetido == null) {
 
-            String url = "http://localhost:8764/auth/verified?verifiedString=" + userEntity.getRandomStringVerified();
+                String randomString = Utils.randomBytes();
+                userEntity.setRol("USER");
+                userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+                userEntity.setRandomStringVerified(randomString);
+                userEntity.setVerificationExpirationDate(LocalDateTime.now());
+
+                String url = "http://localhost:8764/auth/verified?verifiedString=" + userEntity.getRandomStringVerified();
 
 
-            try {
-                mandarMail.generateAndSendEmail(userEntity.getEmail(),
-                        "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
+                try {
+                    mandarMail.generateAndSendEmail(userEntity.getEmail(),
+                            "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                }
+
+                userRepository.save(userEntity);
+                return true;
+            } else {
+                throw new YaExisteException("Email ya existente");
             }
-
-            userRepository.save(userEntity);
-            return true;
-
         } else {
-            return false;
+            throw new YaExisteException("Usuario ya existente");
         }
     }
 

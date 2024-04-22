@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class MapperService {
-    private final VivacPlaceRepository vivacPlaceRepository;
     private final ValorationEntityMapper valorationEntityMapper;
 
     public VivacPlace toVivacPlace(VivacPlaceEntity vivacPlace) {
