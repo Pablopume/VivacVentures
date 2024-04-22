@@ -1,10 +1,7 @@
 package com.example.vivacventures.ui.rest.errores;
 
 
-import com.example.vivacventures.domain.modelo.exceptions.BadPasswordException;
-import com.example.vivacventures.domain.modelo.exceptions.MailIncorrectoException;
-import com.example.vivacventures.domain.modelo.exceptions.NotVerificatedException;
-import com.example.vivacventures.domain.modelo.exceptions.YaExisteException;
+import com.example.vivacventures.domain.modelo.exceptions.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,6 +70,13 @@ public class ControlErrores extends ResponseEntityExceptionHandler implements Ac
     public ResponseEntity<ApiError> handleExceptionNotVerificated(NotVerificatedException e) {
         ApiError apiError = new ApiError(e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(apiError);
+    }
+
+    @ExceptionHandler(NoExisteException.class)
+    public ResponseEntity<ApiError> handleNoExisteException(NoExisteException e) {
+        ApiError apiError = new ApiError(e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(apiError);
     }
 

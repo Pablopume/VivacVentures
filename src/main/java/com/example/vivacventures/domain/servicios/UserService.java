@@ -76,6 +76,9 @@ public class UserService {
     public void forgotPassword(String email) {
         String randomString = Utils.randomBytes();
         UserEntity user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new NoExisteException("Email no encontrado");
+        }
         try {
             mandarMail.generateAndSendEmail(email, "Su nueva contraseña temporal es: " + randomString, "VivacVentures. Nueva contraseña temporal");
         } catch (MessagingException e) {
