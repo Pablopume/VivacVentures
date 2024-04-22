@@ -8,17 +8,28 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
-    private final Config config;
-    public boolean validate(String token) throws ExpiredJwtException, SignatureException {
+
+    @Value(ConstantesUtil.APPLICATION_PASSWORD)
+    private String password;
+
+    @Value(ConstantesUtil.APPLICATION_KEYSTORENAME)
+    private String keystorename;
+
+    @Value(ConstantesUtil.APPLICATION_KEYSTORE)
+    private String keystore;
+
+    public boolean validate(String token) {
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(getPublicKey())
                 .build()
@@ -37,31 +48,31 @@ public class JwtTokenUtil {
         return claimsJws.getBody().getSubject();
     }
 
+
+    private PublicKey getPublicKey() {
+        try {
+
+            char[] keystorePassword = password.toCharArray();
+            KeyStore ks = KeyStore.getInstance(ConstantesUtil.PKCS_12);
+            FileInputStream fis = new FileInputStream(keystore);
+            ks.load(fis, keystorePassword);
+            fis.close();
+            X509Certificate userCertificate = (X509Certificate) ks.getCertificate(keystorename);
+            return userCertificate.getPublicKey();
+
+
+        } catch (Exception ex) {
+
+            return null;
+        }
+    }
+
+
     public String getRole(String token) {
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(getPublicKey())
                 .build()
                 .parseClaimsJws(token);
-        return claimsJws.getBody().get(Constantes.ROL, String.class);
-    }
-
-    private PublicKey getPublicKey() {
-        try {
-            KeyStore ks = KeyStore.getInstance(Constantes.PKCS_12);
-            try (FileInputStream fis = new FileInputStream(config.getProperty(Constantes.KEYSTORE))) {
-                ks.load(fis, config.getProperty(Constantes.PASSWORD).toCharArray());
-            }
-            KeyStore.PasswordProtection pt = new KeyStore.PasswordProtection(config.getProperty(Constantes.PASSWORD).toCharArray());
-            KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry(Constantes.SERVER, pt);
-            if (pkEntry != null) {
-                return pkEntry.getCertificate().getPublicKey();
-            } else {
-//                throw new CertificateException(Constantes.NO_SE_ENCONTRO_LA_ENTRADA_DE_CLAVE_PRIVADA_EN_EL_KEYSTORE);
-                throw new RuntimeException(Constantes.NO_SE_ENCONTRO_LA_ENTRADA_DE_CLAVE_PRIVADA_EN_EL_KEYSTORE);
-            }
-        } catch (Exception e) {
-//            throw new CertificateException(Constantes.ERROR_AL_CARGAR_LA_CLAVE_PUBLICA_DEL_KEYSTORE +e);
-            throw new RuntimeException(Constantes.ERROR_AL_CARGAR_LA_CLAVE_PUBLICA_DEL_KEYSTORE +e);
-        }
+        return claimsJws.getBody().get(ConstantesUtil.ROL, String.class);
     }
 }

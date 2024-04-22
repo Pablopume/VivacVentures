@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 @Getter
 @Setter
@@ -18,8 +19,10 @@ public class VivacPlace {
     private double longitude;
     private String username;
     private int capacity;
-    private String date;
+    private LocalDate date;
     private List<Valoration> valorations;
     private String type;
+    private double price;
+    private List<String> images;
 
 }

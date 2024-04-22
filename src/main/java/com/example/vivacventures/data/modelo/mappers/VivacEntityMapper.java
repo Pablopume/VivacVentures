@@ -6,7 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface VivacEntityMapper {
-    VivacPlace toVivacPlace(VivacPlaceEntity vivacPlaceEntity);
-    VivacPlaceEntity toVivacPlaceEntity(VivacPlace vivacPlace);
+
 
 }

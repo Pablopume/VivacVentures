@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface UserRepository extends ListCrudRepository<UserEntity, Long> {
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.valorations WHERE u.username = ?1")
     UserEntity findByUsername(String username);
     UserEntity findByRandomStringVerified(String randomStringVerified);
     @Modifying

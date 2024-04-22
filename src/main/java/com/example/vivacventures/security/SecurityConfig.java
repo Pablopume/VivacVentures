@@ -1,4 +1,4 @@
-package com.example.vivacventures.ui.config;
+package com.example.vivacventures.security;
 
 
 import lombok.RequiredArgsConstructor;
