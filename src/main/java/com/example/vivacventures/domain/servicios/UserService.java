@@ -164,7 +164,7 @@ public class UserService {
         return Jwts.builder()
                 .setSubject(credentials.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 60000000))
+                .setExpiration(new Date(System.currentTimeMillis() + 600000000))
                 .signWith(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
                 .compact();
     }

@@ -25,7 +25,12 @@ public class CredentialsRest {
     public String resendVerificationLink(@RequestParam String verifiedString) {
         return userService.resendEmail(verifiedString);
     }
+    @GetMapping("/auth/refreshToken")
+    public LoginToken refreshToken(@RequestParam("refreshToken") String refreshToken) {
+        String newToken = userService.refreshToken(refreshToken);
+        return new LoginToken(newToken, refreshToken);
 
+    }
     @GetMapping("/auth/login")
     public LoginToken login(@RequestParam String username, @RequestParam String password) {
         return userService.doLogin(username, password);
