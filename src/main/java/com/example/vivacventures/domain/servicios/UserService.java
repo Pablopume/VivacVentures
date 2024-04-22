@@ -1,17 +1,13 @@
 package com.example.vivacventures.domain.servicios;
-
 import com.example.vivacventures.common.Constantes;
 import com.example.vivacventures.data.modelo.LoginToken;
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.mappers.UserEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
-import com.example.vivacventures.domain.common.Config;
-import com.example.vivacventures.domain.common.DomainConstants;
 import com.example.vivacventures.domain.modelo.User;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.modelo.exceptions.*;
 import com.example.vivacventures.security.KeyProvider;
-import com.example.vivacventures.util.JwtTokenUtil;
 import com.example.vivacventures.util.Utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,8 +25,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
-
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,7 +45,6 @@ public class UserService {
     private String password;
     @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_USERKEYSTORE)
     private String userkeystore;
-
 
     public LoginToken doLogin(String user, String password) {
         Authentication authentication = authenticationManager.authenticate(
@@ -102,15 +95,12 @@ public class UserService {
 
         if (usuarioRepetido == null ) {
             if (emailRepetido == null) {
-
                 String randomString = Utils.randomBytes();
                 userEntity.setRol("USER");
                 userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
                 userEntity.setRandomStringVerified(randomString);
                 userEntity.setVerificationExpirationDate(LocalDateTime.now());
-
                 String url = "http://localhost:8764/auth/verified?verifiedString=" + userEntity.getRandomStringVerified();
-
 
                 try {
                     mandarMail.generateAndSendEmail(userEntity.getEmail(),
@@ -118,7 +108,6 @@ public class UserService {
                 } catch (MessagingException e) {
                     throw new RuntimeException(e);
                 }
-
                 userRepository.save(userEntity);
                 return true;
             } else {
@@ -134,7 +123,6 @@ public class UserService {
         String message = "";
         UserEntity user = userRepository.findByRandomStringVerified(verifiedString);
         String botonReenviar = "<a href=\"http://localhost:8764/auth/resendEmail?verifiedString=" + verifiedString + "\">Reenviar link</a>";
-
 
         if (user.getRandomStringVerified() != null) {
             if (LocalDateTime.now().isBefore(user.getVerificationExpirationDate().plusSeconds(accessExpiration))) {
@@ -172,7 +160,7 @@ public class UserService {
         User credentials = userEntityMapper.toUser(userRepository.findByUsername(nombre));
         return Jwts.builder()
                 .setSubject(credentials.getUsername())
-                .claim("ROL", credentials.getRol())
+                .claim("rol", credentials.getRol())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 300000))  // 300 seconds 300000
                 .signWith(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
