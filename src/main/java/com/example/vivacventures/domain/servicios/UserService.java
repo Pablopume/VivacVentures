@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 @Service
@@ -164,8 +165,9 @@ public class UserService {
         return Jwts.builder()
                 .setSubject(credentials.getUsername())
                 .claim("rol", credentials.getRol())
-                .setIssuedAt(new java.util.Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 300000))  // 300 seconds 300000
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(accessExpiration)
+                        .atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
                 .compact();
 
@@ -176,7 +178,8 @@ public class UserService {
         return Jwts.builder()
                 .setSubject(credentials.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 600000000))
+                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(refreshExpiration)
+                        .atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
                 .compact();
     }
