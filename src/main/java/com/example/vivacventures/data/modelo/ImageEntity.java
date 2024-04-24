@@ -19,6 +19,6 @@ public class ImageEntity {
     @Column(name = "url")
     private String url;
     @ManyToOne
-    @JoinColumn(name = "vivac_id", insertable = false, updatable = false)
+    @JoinColumn(name = "vivac_id")
     private VivacPlaceEntity vivacPlaceEntity;
 }
