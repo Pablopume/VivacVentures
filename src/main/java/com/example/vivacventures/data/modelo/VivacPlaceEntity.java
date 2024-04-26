@@ -39,4 +39,9 @@ public class VivacPlaceEntity {
     private int capacity;
     @OneToMany(mappedBy = "vivacPlaceEntity")
     private List<ValorationEntity> valorations;
+    @Column(name = "price")
+    private Double price;
+    @Column(name = "image" )
+    @OneToMany(mappedBy = "vivacPlaceEntity",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<ImageEntity> images;
 }

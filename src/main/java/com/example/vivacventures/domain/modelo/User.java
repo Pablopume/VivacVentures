@@ -17,5 +17,5 @@ private String password;
 private String email;
 private String rol;
 private List<Valoration> valorations;
-
+private String temporalPassword;
 }
