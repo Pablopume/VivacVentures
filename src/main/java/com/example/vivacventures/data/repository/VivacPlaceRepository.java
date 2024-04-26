@@ -14,10 +14,10 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
     List<VivacPlaceEntity> getVivacByType(String type);
     @Query("SELECT v FROM VivacPlaceEntity v LEFT JOIN FETCH v.valorations")
     List<VivacPlaceEntity> findAllWithVivacPlaceEntity();
-    @Query("SELECT v FROM VivacPlaceEntity v LEFT JOIN FETCH v.valorations LEFT JOIN FETCH v.images WHERE ST_Distance(point(v.latitude, v.longitude), point(:userLatitude, :userLongitude))*111.32 <= 2")
+    @Query("SELECT v FROM VivacPlaceEntity v LEFT JOIN FETCH v.valorations WHERE ST_Distance(point(v.latitude, v.longitude), point(:userLatitude, :userLongitude))*111.32 <= 2")
     List<VivacPlaceEntity> findNearbyPlaces(@Param("userLatitude") double userLatitude, @Param("userLongitude") double userLongitude);
 
-    @Query("SELECT v FROM VivacPlaceEntity v LEFT JOIN FETCH v.valorations LEFT JOIN FETCH v.images WHERE v.id = ?1")
+    @Query("SELECT v FROM VivacPlaceEntity v LEFT JOIN FETCH v.valorations WHERE v.id = ?1")
     VivacPlaceEntity getVivacPlaceEntitiesById(int id);
 
 }
