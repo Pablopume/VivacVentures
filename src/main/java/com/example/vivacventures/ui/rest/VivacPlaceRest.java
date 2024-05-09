@@ -40,4 +40,10 @@ public class VivacPlaceRest {
     public VivacPlace getVivacPlacesById(@PathVariable int id) {
         return vivacPlaceService.getVivacPlaceById(id);
     }
+
+    @DeleteMapping("/delete/{id}")
+    @Secured("ROLE_USER")
+    public void deleteVivacPlace(@PathVariable int id, @RequestHeader("Authorization") String token){
+        vivacPlaceService.deleteVivacPlace(id, token);
+    }
 }

@@ -165,6 +165,7 @@ public class UserService {
         return Jwts.builder()
                 .setSubject(credentials.getUsername())
                 .claim("rol", credentials.getRol())
+                .claim("id", credentials.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(LocalDateTime.now().plusSeconds(accessExpiration)
                         .atZone(ZoneId.systemDefault()).toInstant()))
@@ -205,6 +206,7 @@ public class UserService {
                     .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPublic())
                     .build()
                     .parseClaimsJws(refreshtoken);
+
 
             long expirationMillis = claimsJws.getBody().getExpiration().getTime();
             return System.currentTimeMillis() < expirationMillis;

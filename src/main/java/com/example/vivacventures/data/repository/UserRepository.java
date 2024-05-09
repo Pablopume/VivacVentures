@@ -30,7 +30,7 @@ public interface UserRepository extends ListCrudRepository<UserEntity, Long> {
             """)
     void updateUserStringVerified(String username, String randomStringVerified, LocalDateTime expirationDate);
 
-
+    UserEntity findById(int id);
 
     UserEntity findByEmail(String email);
 }
