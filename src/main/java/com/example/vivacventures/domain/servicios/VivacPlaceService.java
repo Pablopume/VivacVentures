@@ -37,6 +37,11 @@ public class VivacPlaceService {
         return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();
     }
 
+    public List<VivacPlace> getVivacPlaceByUsername(String username) {
+        List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.getVivacByUser(username).stream().toList();
+        return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();
+    }
+
     public List<VivacPlace> getVivacByLatitudeAndLongitude(double userLatitude, double userLongitude) {
         List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.findNearbyPlaces(userLatitude, userLongitude);
         return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();

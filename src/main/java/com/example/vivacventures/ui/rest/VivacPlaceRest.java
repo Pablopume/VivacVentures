@@ -24,6 +24,12 @@ public class VivacPlaceRest {
     public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type) {
         return vivacPlaceService.getVivacPlaceByType(type);
     }
+
+    @GetMapping("/vivacplaces/user/{username}")
+    @Secured("ROLE_USER")
+    public List<VivacPlace> getVivacPlaceByUsername(@PathVariable("username") String username) {
+        return vivacPlaceService.getVivacPlaceByUsername(username);
+    }
     @GetMapping("/nearby")
     @Secured("ROLE_USER")
     public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
