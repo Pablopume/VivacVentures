@@ -1,5 +1,6 @@
 package com.example.vivacventures.ui.rest;
 
+import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.servicios.FavoritoService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class FavoritoRest {
 
     @GetMapping("/favoritos/{username}")
     @Secured("ROLE_USER")
-    public List<VivacPlace> getFavoritos(@PathVariable("username") String username) {
+    public List<FavoritesVivacPlaces> getFavoritos(@PathVariable("username") String username) {
         return favoritoService.getFavoritos(username);
     }
 

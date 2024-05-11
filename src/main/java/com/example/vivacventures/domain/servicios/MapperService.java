@@ -5,6 +5,7 @@ import com.example.vivacventures.data.modelo.ValorationEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.ValorationEntityMapper;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
+import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.Valoration;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,19 @@ public class MapperService {
         vivacPlaceEntity.setImages(images);
         return vivacPlaceEntity;
 
+    }
+
+    public FavoritesVivacPlaces toFavoritesVivacPlaces(VivacPlaceEntity vivacPlaceEntity) {
+        double valorations = 0;
+        String image = null;
+        for (ValorationEntity valorationEntity : vivacPlaceEntity.getValorations()) {
+            valorations += valorationEntity.getScore();
+        }
+        valorations = valorations / vivacPlaceEntity.getValorations().size();
+        if (!vivacPlaceEntity.getImages().isEmpty()) {
+            image = vivacPlaceEntity.getImages().get(0).getUrl();
+        }
+        return new FavoritesVivacPlaces(vivacPlaceEntity.getId(), vivacPlaceEntity.getName(), vivacPlaceEntity.getType(), valorations, image, true);
     }
 
 

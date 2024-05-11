@@ -8,6 +8,7 @@ import com.example.vivacventures.data.repository.FavoritoRepository;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.common.DomainConstants;
+import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +45,12 @@ public class FavoritoService {
             favoritoRepository.deleteByUserAndVivacPlace(userEntity, vivacPlaceEntity);
     }
 
-    public List<VivacPlace> getFavoritos(String username) {
+    public List<FavoritesVivacPlaces> getFavoritos(String username) {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity == null)
             throw new NoExisteException(DomainConstants.USER_NOT_FOUND);
         else
-            return favoritoRepository.findByUserFetch(userEntity).stream().map(favoritoEntity -> mapperService.toVivacPlace(favoritoEntity.getVivacPlace())).toList();
+            return favoritoRepository.findByUserFetch(userEntity).stream().map(favoritoEntity -> mapperService.toFavoritesVivacPlaces(favoritoEntity.getVivacPlace())).toList();
     }
 
 }
