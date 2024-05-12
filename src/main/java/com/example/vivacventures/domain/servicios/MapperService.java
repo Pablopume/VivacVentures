@@ -4,14 +4,12 @@ import com.example.vivacventures.data.modelo.ImageEntity;
 import com.example.vivacventures.data.modelo.ValorationEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.ValorationEntityMapper;
-import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.Valoration;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +39,40 @@ public class MapperService {
     public FavoritesVivacPlaces toFavoritesVivacPlaces(VivacPlaceEntity vivacPlaceEntity) {
         double valorations = 0;
         String image = null;
-        for (ValorationEntity valorationEntity : vivacPlaceEntity.getValorations()) {
-            valorations += valorationEntity.getScore();
+        if (!vivacPlaceEntity.getValorations().isEmpty()) {
+            for (ValorationEntity valorationEntity : vivacPlaceEntity.getValorations()) {
+                valorations += valorationEntity.getScore();
+            }
+            valorations = valorations / vivacPlaceEntity.getValorations().size();
+        } else {
+            valorations = -1;
         }
-        valorations = valorations / vivacPlaceEntity.getValorations().size();
+
         if (!vivacPlaceEntity.getImages().isEmpty()) {
             image = vivacPlaceEntity.getImages().get(0).getUrl();
         }
         return new FavoritesVivacPlaces(vivacPlaceEntity.getId(), vivacPlaceEntity.getName(), vivacPlaceEntity.getType(), valorations, image, true);
+    }
+
+    public FavoritesVivacPlaces objectToFavoriteVivacPlace(Object[] object) {
+
+        FavoritesVivacPlaces favoritesVivacPlaces = new FavoritesVivacPlaces();
+        favoritesVivacPlaces.setId((Integer) object[0]);
+        favoritesVivacPlaces.setName((String) object[1]);
+        favoritesVivacPlaces.setType((String) object[2]);
+        if (object[3] != null){
+            favoritesVivacPlaces.setValorations((Double) object[3]);
+        } else {
+            favoritesVivacPlaces.setValorations(-1);
+        }
+        if (object[4] != null){
+            favoritesVivacPlaces.setImages((String) object[4]);
+        } else {
+            favoritesVivacPlaces.setImages(null);
+        }
+        favoritesVivacPlaces.setFavorite(object[5].equals(1));
+
+        return favoritesVivacPlaces;
     }
 
 

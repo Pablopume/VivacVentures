@@ -16,8 +16,6 @@ public class FavoritesVivacPlaces {
     private int id;
     private String name;
     private String type;
-//    private String description;
-//    private List<Valoration> valorations;
     private double valorations;
     private String images;
     private boolean isFavorite;

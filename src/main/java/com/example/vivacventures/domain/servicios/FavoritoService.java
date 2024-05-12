@@ -47,10 +47,10 @@ public class FavoritoService {
 
     public List<FavoritesVivacPlaces> getFavoritos(String username) {
         UserEntity userEntity = userRepository.findByUsername(username);
-        if (userEntity == null)
+        if (userEntity == null){
             throw new NoExisteException(DomainConstants.USER_NOT_FOUND);
-        else
-            return favoritoRepository.findByUserFetch(userEntity).stream().map(favoritoEntity -> mapperService.toFavoritesVivacPlaces(favoritoEntity.getVivacPlace())).toList();
+        }else{
+            return favoritoRepository.getFavouritesVivacPlaces(username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
+        }
     }
-
 }

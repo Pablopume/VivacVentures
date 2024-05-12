@@ -1,5 +1,6 @@
 package com.example.vivacventures.ui.rest;
 
+import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.servicios.VivacPlaceService;
 import jakarta.websocket.server.PathParam;
@@ -19,6 +20,12 @@ public class VivacPlaceRest {
         return vivacPlaceService.getVivacPlaces();
     }
 
+    @GetMapping("/vivacplaces/favourites/{username}")
+    @Secured("ROLE_USER")
+    public List<FavoritesVivacPlaces> getVivacPlacesWithFavourites(@PathVariable("username") String username) {
+        return vivacPlaceService.getVivacPlacesWithFavourites(username);
+    }
+
     @GetMapping("/{type}")
     @Secured("ROLE_USER")
     public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type) {
@@ -27,7 +34,7 @@ public class VivacPlaceRest {
 
     @GetMapping("/vivacplaces/user/{username}")
     @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacPlaceByUsername(@PathVariable("username") String username) {
+    public List<FavoritesVivacPlaces> getVivacPlaceByUsername(@PathVariable("username") String username) {
         return vivacPlaceService.getVivacPlaceByUsername(username);
     }
     @GetMapping("/nearby")
