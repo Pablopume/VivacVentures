@@ -20,15 +20,15 @@ public class VivacPlaceRest {
         return vivacPlaceService.getVivacPlaces();
     }
 
-    @GetMapping("/vivacplaces/favourites/{username}")
+    @GetMapping("/vivacplaces/{username}")
     @Secured("ROLE_USER")
     public List<FavoritesVivacPlaces> getVivacPlacesWithFavourites(@PathVariable("username") String username) {
         return vivacPlaceService.getVivacPlacesWithFavourites(username);
     }
 
-    @GetMapping("/{type}")
+    @GetMapping("/vivacplaces/type/{type}/{username}")
     @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type) {
+    public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type, @PathVariable String username) {
         return vivacPlaceService.getVivacPlaceByType(type);
     }
 
@@ -37,9 +37,9 @@ public class VivacPlaceRest {
     public List<FavoritesVivacPlaces> getVivacPlaceByUsername(@PathVariable("username") String username) {
         return vivacPlaceService.getVivacPlaceByUsername(username);
     }
-    @GetMapping("/nearby")
+    @GetMapping("/nearby/{username}")
     @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
+    public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, @PathVariable String username) {
         return vivacPlaceService.getVivacByLatitudeAndLongitude(latitude, longitude);
     }
     @PostMapping("/vivacplace")
