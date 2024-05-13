@@ -79,11 +79,6 @@ public class VivacPlaceService {
         List<Object[]> valorationData = vivacPlaceRepository.findValorationsByVivacPlaceId(id);
         List<String> images = vivacPlaceRepository.findImagesByVivacPlaceId(id);
 
-        System.out.println("aaaaaaaaaaaaaaaaaaa");
-        System.out.println(Arrays.toString(vivacPlaceData));
-        System.out.println(valorationData);
-        System.out.println(images);
-
         return mapperService.mapToVivacPlace(vivacPlaceData, valorationData, images);
     }
 
