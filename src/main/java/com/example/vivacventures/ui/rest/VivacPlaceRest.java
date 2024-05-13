@@ -3,7 +3,6 @@ package com.example.vivacventures.ui.rest;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.servicios.VivacPlaceService;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +13,7 @@ import java.util.List;
 @RestController
 public class VivacPlaceRest {
     private final VivacPlaceService vivacPlaceService;
+
     @GetMapping("/vivacplaces")
     @Secured("ROLE_USER")
     public List<VivacPlace> getVivacPlaces() {
@@ -28,7 +28,13 @@ public class VivacPlaceRest {
 
     @GetMapping("/vivacplaces/type/{type}/{username}")
     @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type, @PathVariable String username) {
+    public List<FavoritesVivacPlaces> getVivacPlaceByType(@PathVariable("type") String type, @PathVariable String username) {
+        return vivacPlaceService.getVivacPlaceByTypeAndUser(type, username);
+    }
+
+    @GetMapping("/vivacplaces/type/{type}")
+    @Secured("ROLE_USER")
+    public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type) {
         return vivacPlaceService.getVivacPlaceByType(type);
     }
 
@@ -37,26 +43,40 @@ public class VivacPlaceRest {
     public List<FavoritesVivacPlaces> getVivacPlaceByUsername(@PathVariable("username") String username) {
         return vivacPlaceService.getVivacPlaceByUsername(username);
     }
+
     @GetMapping("/nearby/{username}")
     @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, @PathVariable String username) {
+    public List<FavoritesVivacPlaces> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, @PathVariable String username) {
+        return vivacPlaceService.getVivacByLatitudeAndLongitudeAndUser(latitude, longitude, username);
+    }
+
+    @GetMapping("/nearby")
+    @Secured("ROLE_USER")
+    public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
         return vivacPlaceService.getVivacByLatitudeAndLongitude(latitude, longitude);
     }
+
     @PostMapping("/vivacplace")
     @Secured("ROLE_USER")
     public VivacPlace saveVivacPlace(@RequestBody VivacPlace vivacPlace) {
         return vivacPlaceService.saveVivacPlace(vivacPlace);
     }
 
-    @GetMapping("/vivacplaces/{id}")
+    @GetMapping("/vivacplaces/id/{id}")
     @Secured("ROLE_USER")
     public VivacPlace getVivacPlacesById(@PathVariable int id) {
         return vivacPlaceService.getVivacPlaceById(id);
     }
 
+    @GetMapping("/vivacplaces/id/{id}/{username}")
+    @Secured("ROLE_USER")
+    public VivacPlace getVivacPlacesById(@PathVariable int id, @PathVariable String username) {
+        return vivacPlaceService.getVivacPlaceByIdAndUsername(id, username);
+    }
+
     @DeleteMapping("/delete/{id}")
     @Secured("ROLE_USER")
-    public void deleteVivacPlace(@PathVariable int id, @RequestHeader("Authorization") String token){
+    public void deleteVivacPlace(@PathVariable int id, @RequestHeader("Authorization") String token) {
         vivacPlaceService.deleteVivacPlace(id, token);
     }
 }

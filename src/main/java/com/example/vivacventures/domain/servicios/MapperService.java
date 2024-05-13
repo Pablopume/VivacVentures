@@ -5,6 +5,7 @@ import com.example.vivacventures.data.modelo.ValorationEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.ValorationEntityMapper;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
+import com.example.vivacventures.domain.modelo.User;
 import com.example.vivacventures.domain.modelo.Valoration;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,43 @@ public class MapperService {
         List<String> images = new ArrayList<>();
         vivacPlace.getImages().forEach(image -> images.add(image.getUrl()));
         return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), valorations, vivacPlace.getType(), vivacPlace.getPrice(), images);
+    }
+
+    public VivacPlace mapToVivacPlace(Object[] vivacPlaceData, List<Object[]> valorationData, List<String> images) {
+        VivacPlace vivacPlace = new VivacPlace();
+        vivacPlace.setId((Integer) vivacPlaceData[0]);
+        vivacPlace.setName((String) vivacPlaceData[1]);
+        vivacPlace.setType((String) vivacPlaceData[2]);
+        vivacPlace.setDescription((String) vivacPlaceData[3]);
+        vivacPlace.setLatitude((Double) vivacPlaceData[4]);
+        vivacPlace.setLongitude((Double) vivacPlaceData[5]);
+        vivacPlace.setUsername((String) vivacPlaceData[6]);
+        vivacPlace.setCapacity((Integer) vivacPlaceData[7]);
+        vivacPlace.setDate(((java.sql.Date) vivacPlaceData[8]).toLocalDate());
+        vivacPlace.setPrice((Double) vivacPlaceData[9]);
+        Long favorite = (Long) vivacPlaceData[10];
+        if (favorite == 1){
+            vivacPlace.setFavorite(true);
+        } else {
+            vivacPlace.setFavorite(false);
+        }
+        List<Valoration> valorations = valorationData.stream()
+                .map(data -> {
+                    Valoration valoration = new Valoration();
+                    valoration.setId((Integer) data[0]);
+                    User user = new User();
+                    user.setUsername((String) data[1]);
+                    valoration.setUser(user);
+                    valoration.setScore((Integer) data[2]);
+                    valoration.setReview((String) data[3]);
+                    return valoration;
+                })
+                .toList();
+        vivacPlace.setValorations(valorations);
+
+        vivacPlace.setImages(images);
+
+        return vivacPlace;
     }
 
     public VivacPlaceEntity toVivacPlaceEntity(VivacPlace vivacPlace) {
@@ -55,20 +93,19 @@ public class MapperService {
     }
 
     public FavoritesVivacPlaces objectToFavoriteVivacPlace(Object[] object) {
-
         FavoritesVivacPlaces favoritesVivacPlaces = new FavoritesVivacPlaces();
         favoritesVivacPlaces.setId((Integer) object[0]);
         favoritesVivacPlaces.setName((String) object[1]);
         favoritesVivacPlaces.setType((String) object[2]);
-        if (object[3] != null){
+        if (object[3] != null) {
             favoritesVivacPlaces.setValorations((Double) object[3]);
         } else {
             favoritesVivacPlaces.setValorations(-1);
         }
-        if (object[4] != null){
+        if (object[4] != null) {
             favoritesVivacPlaces.setImages((String) object[4]);
         } else {
-            favoritesVivacPlaces.setImages(null);
+            favoritesVivacPlaces.setImages("");
         }
         favoritesVivacPlaces.setFavorite(object[5].equals(1));
 

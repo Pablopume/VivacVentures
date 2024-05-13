@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -36,6 +37,10 @@ public class VivacPlaceService {
         return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();
     }
 
+    public List<FavoritesVivacPlaces> getVivacPlaceByTypeAndUser(String type, String username) {
+        return vivacPlaceRepository.getVivacByTypeAndUser(type, username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
+    }
+
     public List<FavoritesVivacPlaces> getVivacPlaceByUsername(String username) {
         return vivacPlaceRepository.getVivacByUser(username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
     }
@@ -43,6 +48,10 @@ public class VivacPlaceService {
     public List<VivacPlace> getVivacByLatitudeAndLongitude(double userLatitude, double userLongitude) {
         List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.findNearbyPlaces(userLatitude, userLongitude);
         return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();
+    }
+
+    public List<FavoritesVivacPlaces> getVivacByLatitudeAndLongitudeAndUser(double userLatitude, double userLongitude, String username) {
+        return vivacPlaceRepository.findNearbyPlacesAndUser(userLatitude, userLongitude, username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
     }
 
 
@@ -62,6 +71,20 @@ public class VivacPlaceService {
 
     public VivacPlace getVivacPlaceById(int id) {
         return mapperService.toVivacPlace(vivacPlaceRepository.getVivacPlaceEntitiesById(id));
+    }
+
+    public VivacPlace getVivacPlaceByIdAndUsername(int id, String username) {
+        List<Object[]> vivacPlaceDataList = vivacPlaceRepository.findVivacPlaceByIdAndUsername(id, username);
+        Object[] vivacPlaceData = vivacPlaceDataList.isEmpty() ? null : vivacPlaceDataList.get(0);
+        List<Object[]> valorationData = vivacPlaceRepository.findValorationsByVivacPlaceId(id);
+        List<String> images = vivacPlaceRepository.findImagesByVivacPlaceId(id);
+
+        System.out.println("aaaaaaaaaaaaaaaaaaa");
+        System.out.println(Arrays.toString(vivacPlaceData));
+        System.out.println(valorationData);
+        System.out.println(images);
+
+        return mapperService.mapToVivacPlace(vivacPlaceData, valorationData, images);
     }
 
     @Transactional
