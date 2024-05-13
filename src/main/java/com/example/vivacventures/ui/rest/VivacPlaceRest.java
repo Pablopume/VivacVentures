@@ -32,11 +32,7 @@ public class VivacPlaceRest {
         return vivacPlaceService.getVivacPlaceByTypeAndUser(type, username);
     }
 
-    @GetMapping("/vivacplaces/type/{type}")
-    @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacPlaceByType(@PathVariable("type") String type) {
-        return vivacPlaceService.getVivacPlaceByType(type);
-    }
+
 
     @GetMapping("/vivacplaces/user/{username}")
     @Secured("ROLE_USER")
@@ -50,11 +46,7 @@ public class VivacPlaceRest {
         return vivacPlaceService.getVivacByLatitudeAndLongitudeAndUser(latitude, longitude, username);
     }
 
-    @GetMapping("/nearby")
-    @Secured("ROLE_USER")
-    public List<VivacPlace> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
-        return vivacPlaceService.getVivacByLatitudeAndLongitude(latitude, longitude);
-    }
+
 
     @PostMapping("/vivacplace")
     @Secured("ROLE_USER")

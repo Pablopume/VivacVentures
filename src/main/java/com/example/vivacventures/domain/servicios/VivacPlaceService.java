@@ -8,6 +8,7 @@ import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
+import com.example.vivacventures.domain.modelo.exceptions.BadPriceException;
 import com.example.vivacventures.domain.modelo.exceptions.NotVerificatedException;
 import com.example.vivacventures.security.KeyProvider;
 import io.jsonwebtoken.Claims;
@@ -32,10 +33,7 @@ public class VivacPlaceService {
     @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_USERKEYSTORE)
     private String userkeystore;
 
-    public List<VivacPlace> getVivacPlaceByType(String type) {
-        List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.getVivacByType(type).stream().toList();
-        return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();
-    }
+
 
     public List<FavoritesVivacPlaces> getVivacPlaceByTypeAndUser(String type, String username) {
         return vivacPlaceRepository.getVivacByTypeAndUser(type, username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
@@ -45,10 +43,6 @@ public class VivacPlaceService {
         return vivacPlaceRepository.getVivacByUser(username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
     }
 
-    public List<VivacPlace> getVivacByLatitudeAndLongitude(double userLatitude, double userLongitude) {
-        List<VivacPlaceEntity> vivacPlaceEntities = vivacPlaceRepository.findNearbyPlaces(userLatitude, userLongitude);
-        return vivacPlaceEntities.stream().map(mapperService::toVivacPlace).toList();
-    }
 
     public List<FavoritesVivacPlaces> getVivacByLatitudeAndLongitudeAndUser(double userLatitude, double userLongitude, String username) {
         return vivacPlaceRepository.findNearbyPlacesAndUser(userLatitude, userLongitude, username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
@@ -56,7 +50,7 @@ public class VivacPlaceService {
 
 
     public List<VivacPlace> getVivacPlaces() {
-        return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(mapperService::toVivacPlace).toList();
+        return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(mapperService::toVivacPlaceTipoAndNameAndDescriptionAndId).toList();
     }
 
     public List<FavoritesVivacPlaces> getVivacPlacesWithFavourites(String username) {
@@ -64,6 +58,9 @@ public class VivacPlaceService {
     }
 
     public VivacPlace saveVivacPlace(VivacPlace vivacPlace) {
+        if ( vivacPlace.getPrice() < 0) {
+            throw new BadPriceException("El precio no puede ser negativo");
+        }
         VivacPlaceEntity vivacPlaceEntity = mapperService.toVivacPlaceEntity(vivacPlace);
         vivacPlaceRepository.save(vivacPlaceEntity);
         return vivacPlace;

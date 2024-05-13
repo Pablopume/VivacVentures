@@ -42,6 +42,6 @@ public class VivacPlaceEntity {
     @Column(name = "price")
     private Double price;
     @Column(name = "image" )
-    @OneToMany(mappedBy = "vivacPlaceEntity",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "vivacPlaceEntity",cascade = CascadeType.PERSIST)
     private List<ImageEntity> images;
 }

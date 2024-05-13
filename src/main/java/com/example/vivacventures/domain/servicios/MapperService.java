@@ -26,6 +26,10 @@ public class MapperService {
         return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), valorations, vivacPlace.getType(), vivacPlace.getPrice(), images);
     }
 
+    public VivacPlace toVivacPlaceTipoAndNameAndDescriptionAndId(VivacPlaceEntity vivacPlace) {
+    return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(),vivacPlace.getUsername(),vivacPlace.getCapacity(),vivacPlace.getDate(),new ArrayList<>(),vivacPlace.getType(),vivacPlace.getPrice(),new ArrayList<>());
+    }
+
     public VivacPlace mapToVivacPlace(Object[] vivacPlaceData, List<Object[]> valorationData, List<String> images) {
         VivacPlace vivacPlace = new VivacPlace();
         vivacPlace.setId((Integer) vivacPlaceData[0]);
