@@ -58,7 +58,7 @@ public class UserService {
             String refreshToken = generateRefreshToken(user);
             return new LoginToken(accessToken, refreshToken);
         }
-        //nunca va a llegar aquí ya que si no se autentica lanza la excepcion de hibernate, por eso devuelvo un null
+        //nunca va a llegar aquí ya que si no se autentica lanza la excepcion de hibernate, por eso devuelvo una excepcion
         else {
             throw new NotVerificatedException("Usuario o contraseña incorrectos");
         }
