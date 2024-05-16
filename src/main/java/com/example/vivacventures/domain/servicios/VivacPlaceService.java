@@ -1,14 +1,17 @@
 package com.example.vivacventures.domain.servicios;
 
 import com.example.vivacventures.common.Constantes;
+import com.example.vivacventures.data.modelo.ImageEntity;
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.VivacEntityMapper;
+import com.example.vivacventures.data.repository.ImageRepository;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.modelo.exceptions.BadPriceException;
+import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import com.example.vivacventures.domain.modelo.exceptions.NotVerificatedException;
 import com.example.vivacventures.security.KeyProvider;
 import io.jsonwebtoken.Claims;
@@ -26,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VivacPlaceService {
     private final VivacPlaceRepository vivacPlaceRepository;
+    private final ImageRepository imageRepository;
     private final VivacEntityMapper vivacEntityMapper;
     private final MapperService mapperService;
     private final KeyProvider keyProvider;
@@ -64,6 +68,27 @@ public class VivacPlaceService {
         VivacPlaceEntity vivacPlaceEntity = mapperService.toVivacPlaceEntity(vivacPlace);
         vivacPlaceRepository.save(vivacPlaceEntity);
         return vivacPlace;
+    }
+
+    public boolean updateVivacPlace(VivacPlace vivacPlace) {
+        VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(vivacPlace.getId());
+        if (vivacPlaceEntity != null) {
+            List<ImageEntity> images = imageRepository.getByVivacPlaceEntity(vivacPlaceEntity.getId());
+            for (ImageEntity image : images) {
+                imageRepository.delete(image);
+            }
+            List<ImageEntity> imagesToSave = vivacPlaceEntity.getImages();
+            for (ImageEntity image : imagesToSave) {
+                ImageEntity imageEntity = new ImageEntity();
+                imageEntity.setUrl(image.getUrl());
+                imageEntity.setVivacPlaceEntity(vivacPlaceEntity);
+                imageRepository.save(imageEntity);
+            }
+            vivacPlaceRepository.updateVivacPlaceEntitiesById(vivacPlaceEntity.getId());
+            return true;
+        } else {
+            throw new NoExisteException("No se ha podido actualizar el lugar");
+        }
     }
 
     public VivacPlace getVivacPlaceById(int id) {

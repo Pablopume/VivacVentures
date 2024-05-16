@@ -38,6 +38,10 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
     @Query(value = "SELECT vp.id, vp.name, vp.type, vp.description, vp.latitude, vp.longitude, vp.username, vp.capacity, vp.date, vp.price, (SELECT COUNT(*) FROM favorito f INNER JOIN user u ON f.user_id = u.id WHERE u.username = :username AND f.vivac_place_id = vp.id) > 0 as isFavorite FROM vivac_place vp WHERE vp.id = :id", nativeQuery = true)
     List<Object[]> findVivacPlaceByIdAndUsername(@Param("id") int id, @Param("username") String username);
 
+    @Query(value = "UPDATE vivac_place vp SET vp.name = :name, vp.description = :description, vp.latitude = :latitude, vp.longitude = :longitude, vp.capacity = :capacity, vp.date = :date, vp.price = :price WHERE vp.id = :id", nativeQuery = true)
+    VivacPlaceEntity updateVivacPlaceEntitiesById(int id);
+
+
 
 
 

@@ -54,6 +54,12 @@ public class VivacPlaceRest {
         return vivacPlaceService.saveVivacPlace(vivacPlace);
     }
 
+    @PutMapping("/vivacplace")
+    @Secured("ROLE_USER")
+    public boolean updateVivacPlace(@RequestBody VivacPlace vivacPlace) {
+        return vivacPlaceService.updateVivacPlace(vivacPlace);
+    }
+
     @GetMapping("/vivacplaces/id/{id}")
     @Secured("ROLE_USER")
     public VivacPlace getVivacPlacesById(@PathVariable int id) {
