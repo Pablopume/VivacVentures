@@ -24,5 +24,20 @@ public class VivacPlace {
     private String type;
     private double price;
     private List<String> images;
+    private boolean isFavorite;
 
+    public VivacPlace(int id, String name, String description, double latitude, double longitude, String username, int capacity, LocalDate date, List<Valoration> valorations, String type, double price, List<String> images) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.username = username;
+        this.capacity = capacity;
+        this.date = date;
+        this.valorations = valorations;
+        this.type = type;
+        this.price = price;
+        this.images = images;
+    }
 }

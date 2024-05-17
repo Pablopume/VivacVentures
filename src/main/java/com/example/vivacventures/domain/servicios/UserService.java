@@ -58,7 +58,7 @@ public class UserService {
             String refreshToken = generateRefreshToken(user);
             return new LoginToken(accessToken, refreshToken);
         }
-        //nunca va a llegar aquí ya que si no se autentica lanza la excepcion de hibernate, por eso devuelvo un null
+        //nunca va a llegar aquí ya que si no se autentica lanza la excepcion de hibernate, por eso devuelvo una excepcion
         else {
             throw new NotVerificatedException("Usuario o contraseña incorrectos");
         }
@@ -165,6 +165,7 @@ public class UserService {
         return Jwts.builder()
                 .setSubject(credentials.getUsername())
                 .claim("rol", credentials.getRol())
+                .claim("id", credentials.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(LocalDateTime.now().plusSeconds(accessExpiration)
                         .atZone(ZoneId.systemDefault()).toInstant()))
@@ -205,6 +206,7 @@ public class UserService {
                     .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPublic())
                     .build()
                     .parseClaimsJws(refreshtoken);
+
 
             long expirationMillis = claimsJws.getBody().getExpiration().getTime();
             return System.currentTimeMillis() < expirationMillis;
