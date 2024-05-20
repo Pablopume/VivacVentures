@@ -19,6 +19,6 @@ public interface ValorationRepository extends ListCrudRepository<ValorationEntit
 void deleteById(int id);
 ValorationEntity findById(int id);
 
-@Query("INSERT INTO valoration (vivac_id, username, score, review) VALUES (:vivac_id, :username, :score, :review)")
+@Query(value = "INSERT INTO valoration (vivac_id, username, score, review) VALUES (:vivac_id, :username, :score, :review)", nativeQuery = true)
 ValorationEntity insertValoration(@Param("vivac_id") int vivac_id, @Param("username") String username, @Param("score") int score, @Param("review") String review);
 }
