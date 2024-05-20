@@ -1,9 +1,12 @@
 package com.example.vivacventures.domain.servicios;
 
 import com.example.vivacventures.data.modelo.ImageEntity;
+import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.ValorationEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.ValorationEntityMapper;
+import com.example.vivacventures.data.repository.UserRepository;
+import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.User;
 import com.example.vivacventures.domain.modelo.Valoration;
@@ -19,6 +22,8 @@ import java.util.List;
 @Service
 public class MapperService {
     private final ValorationEntityMapper valorationEntityMapper;
+    private final VivacPlaceRepository vivacPlaceRepository;
+    private final UserRepository userRepository;
 
     public VivacPlace toVivacPlace(VivacPlaceEntity vivacPlace) {
         List<Valoration> valorations = vivacPlace.getValorations().stream().map(valorationEntityMapper::toValoration).toList();
@@ -28,7 +33,18 @@ public class MapperService {
     }
 
     public VivacPlace toVivacPlaceTipoAndNameAndDescriptionAndId(VivacPlaceEntity vivacPlace) {
-    return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(),vivacPlace.getUsername(),vivacPlace.getCapacity(),vivacPlace.getDate(),new ArrayList<>(),vivacPlace.getType(),vivacPlace.getPrice(),new ArrayList<>());
+        return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), new ArrayList<>(), vivacPlace.getType(), vivacPlace.getPrice(), new ArrayList<>());
+    }
+
+    public ValorationEntity toValorationEntity(Valoration valoration) {
+        VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(valoration.getVivacPlaceId());
+        UserEntity userEntity = userRepository.findByUsername(valoration.getUsername());
+        return new ValorationEntity(valoration.getId(), valoration.getScore(), valoration.getReview(), vivacPlaceEntity, userEntity);
+    }
+
+    public Valoration toValoration(ValorationEntity valorationEntity) {
+
+        return new Valoration(valorationEntity.getId(), valorationEntity.getUserEntity().getUsername(), valorationEntity.getVivacPlaceEntity().getId(), valorationEntity.getScore(), valorationEntity.getReview());
     }
 
     public VivacPlace mapToVivacPlace(Object[] vivacPlaceData, List<Object[]> valorationData, List<String> images) {
@@ -44,7 +60,7 @@ public class MapperService {
         vivacPlace.setDate(((java.sql.Date) vivacPlaceData[8]).toLocalDate());
         vivacPlace.setPrice((Double) vivacPlaceData[9]);
         Long favorite = (Long) vivacPlaceData[10];
-        if (favorite == 1){
+        if (favorite == 1) {
             vivacPlace.setFavorite(true);
         } else {
             vivacPlace.setFavorite(false);
@@ -53,9 +69,7 @@ public class MapperService {
                 .map(data -> {
                     Valoration valoration = new Valoration();
                     valoration.setId((Integer) data[0]);
-                    User user = new User();
-                    user.setUsername((String) data[1]);
-                    valoration.setUser(user);
+                    valoration.setUsername((String) data[1]);
                     valoration.setScore((Integer) data[2]);
                     valoration.setReview((String) data[3]);
                     return valoration;

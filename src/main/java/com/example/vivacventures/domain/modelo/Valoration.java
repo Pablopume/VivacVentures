@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Valoration {
     private int id;
-    private User user;
-    private VivacPlace vivacPlace;
+    private String username;
+    private int vivacPlaceId;
     private int score;
     private String review;
 }
