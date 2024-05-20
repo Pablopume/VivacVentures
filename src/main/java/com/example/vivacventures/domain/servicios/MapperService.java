@@ -11,6 +11,7 @@ import com.example.vivacventures.domain.modelo.VivacPlace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +103,8 @@ public class MapperService {
         favoritesVivacPlaces.setName((String) object[1]);
         favoritesVivacPlaces.setType((String) object[2]);
         if (object[3] != null) {
-            favoritesVivacPlaces.setValorations((Double) object[3]);
+            BigDecimal valorations = (BigDecimal) object[3];
+            favoritesVivacPlaces.setValorations(valorations.doubleValue());
         } else {
             favoritesVivacPlaces.setValorations(-1);
         }
