@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -19,6 +20,8 @@ public interface ValorationRepository extends ListCrudRepository<ValorationEntit
 void deleteById(int id);
 ValorationEntity findById(int id);
 
-@Query("INSERT INTO valoration (vivac_id, username, score, review) VALUES (:vivac_id, :username, :score, :review)")
-ValorationEntity insertValoration(@Param("vivac_id") int vivac_id, @Param("username") String username, @Param("score") int score, @Param("review") String review);
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO valoration (vivac_id, username, score, review, date) VALUES (:vivac_id, :username, :score, :review, :date)", nativeQuery = true)
+    void insertValoration(@Param("vivac_id") int vivacId, @Param("username") int username, @Param("score") int score, @Param("review") String review, @Param("date") LocalDate date);
 }

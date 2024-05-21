@@ -72,7 +72,7 @@ public class ValorationService {
             throw new BadScoreException("El score debe estar entre 1 y 5");
         }
         ValorationEntity valorationEntity = mapperService.toValorationEntity(valoration);
-        valorationRepository.save(valorationEntity);
+        valorationRepository.insertValoration(valorationEntity.getVivacPlaceEntity().getId(), valorationEntity.getUserEntity().getId(), valorationEntity.getScore(), valorationEntity.getReview(),valorationEntity.getDate());
         return valoration;
     }
 

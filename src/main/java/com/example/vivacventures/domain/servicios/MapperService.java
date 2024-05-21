@@ -39,12 +39,12 @@ public class MapperService {
     public ValorationEntity toValorationEntity(Valoration valoration) {
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(valoration.getVivacPlaceId());
         UserEntity userEntity = userRepository.findByUsername(valoration.getUsername());
-        return new ValorationEntity(valoration.getId(), valoration.getScore(), valoration.getReview(), vivacPlaceEntity, userEntity);
+        return new ValorationEntity(valoration.getId(), valoration.getScore(), valoration.getReview(), vivacPlaceEntity, userEntity,valoration.getDate());
     }
 
     public Valoration toValoration(ValorationEntity valorationEntity) {
 
-        return new Valoration(valorationEntity.getId(), valorationEntity.getUserEntity().getUsername(), valorationEntity.getVivacPlaceEntity().getId(), valorationEntity.getScore(), valorationEntity.getReview());
+        return new Valoration(valorationEntity.getId(), valorationEntity.getUserEntity().getUsername(), valorationEntity.getVivacPlaceEntity().getId(), valorationEntity.getScore(), valorationEntity.getReview(),valorationEntity.getDate());
     }
 
     public VivacPlace mapToVivacPlace(Object[] vivacPlaceData, List<Object[]> valorationData, List<String> images) {
