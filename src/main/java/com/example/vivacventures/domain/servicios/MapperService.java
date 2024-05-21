@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +77,7 @@ public class MapperService {
                     valoration.setVivacPlaceId(vivacPlace.getId());
                     valoration.setScore((Integer) data[2]);
                     valoration.setReview((String) data[3]);
+                    valoration.setDate(((java.sql.Date) data[4]).toLocalDate());
                     return valoration;
                 })
                 .toList();
