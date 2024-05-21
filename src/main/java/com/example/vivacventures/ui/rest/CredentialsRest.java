@@ -1,6 +1,7 @@
 package com.example.vivacventures.ui.rest;
 
 import com.example.vivacventures.data.modelo.LoginToken;
+import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.servicios.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,11 @@ public class CredentialsRest {
         String newToken = userService.refreshToken(refreshToken);
         return new LoginToken(newToken, refreshToken);
 
+    }
+
+    @GetMapping("/amigo")
+    public UserAmigoDTO getAmigos(@RequestParam String username) {
+        return userService.getUserAmigo(username);
     }
 
     @PutMapping("/auth/forgotPassword")

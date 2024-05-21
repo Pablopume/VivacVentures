@@ -14,7 +14,9 @@ import java.util.List;
 public interface UserRepository extends ListCrudRepository<UserEntity, Long> {
     @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.valorations WHERE u.username = ?1")
     UserEntity findByUsername(String username);
+
     UserEntity findByRandomStringVerified(String randomStringVerified);
+
     @Modifying
     @Transactional
     @Query(""" 
@@ -35,6 +37,6 @@ public interface UserRepository extends ListCrudRepository<UserEntity, Long> {
 
     UserEntity findByEmail(String email);
 
-    @Query(value = "SELECT u.username, COUNT(vp.id) as num_vivac_places FROM user u LEFT JOIN vivac_place vp ON u.username = vp.username GROUP BY u.username", nativeQuery = true)
-    List<Object[]> getAllUsersWithVivacPlaceCount();
+    @Query(value = "SELECT u.username, COUNT(vp.id) as num_vivac_places FROM user u LEFT JOIN vivac_place vp ON u.username = vp.username WHERE u.username =:username GROUP BY u.username", nativeQuery = true)
+    List<Object[]> getAllUsersWithVivacPlaceCount(String username);
 }
