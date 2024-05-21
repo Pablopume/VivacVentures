@@ -41,7 +41,9 @@ public class VivacPlaceEntity {
     private List<ValorationEntity> valorations;
     @Column(name = "price")
     private Double price;
-    @Column(name = "image" )
-    @OneToMany(mappedBy = "vivacPlaceEntity",cascade = CascadeType.PERSIST)
+    @Column(name = "image")
+    @OneToMany(mappedBy = "vivacPlaceEntity", cascade = CascadeType.PERSIST)
     private List<ImageEntity> images;
+    @Column(name = "visible")
+    private boolean visible;
 }

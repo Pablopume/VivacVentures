@@ -61,7 +61,7 @@ public class ValorationService {
             valorationRepository.deleteById(id);
         }
         else{
-            throw new NotVerificatedException("No existe la valoración");
+            throw new NotVerificatedException("Esa valoración no es tuya");
         }
 
 

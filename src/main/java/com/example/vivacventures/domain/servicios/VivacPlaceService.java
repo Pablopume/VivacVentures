@@ -65,7 +65,9 @@ public class VivacPlaceService {
         if ( vivacPlace.getPrice() < 0) {
             throw new BadPriceException("El precio no puede ser negativo");
         }
+        vivacPlace.setVisible(true);
         VivacPlaceEntity vivacPlaceEntity = mapperService.toVivacPlaceEntity(vivacPlace);
+
         vivacPlaceRepository.save(vivacPlaceEntity);
         return vivacPlace;
     }
