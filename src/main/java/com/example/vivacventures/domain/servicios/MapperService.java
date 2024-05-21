@@ -70,6 +70,7 @@ public class MapperService {
                     Valoration valoration = new Valoration();
                     valoration.setId((Integer) data[0]);
                     valoration.setUsername((String) data[1]);
+                    valoration.setVivacPlaceId(vivacPlace.getId());
                     valoration.setScore((Integer) data[2]);
                     valoration.setReview((String) data[3]);
                     return valoration;
