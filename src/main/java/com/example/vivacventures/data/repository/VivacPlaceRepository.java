@@ -32,7 +32,7 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
 
     void deleteById(int id);
 
-    @Query(value = "SELECT vr.id, u.username, vr.score, vr.review FROM valoration vr INNER JOIN user u ON vr.username = u.id WHERE vr.vivac_id = :id", nativeQuery = true)
+    @Query(value = "SELECT vr.id, u.username, vr.score, vr.review, vr.date FROM valoration vr INNER JOIN user u ON vr.username = u.id WHERE vr.vivac_id = :id", nativeQuery = true)
     List<Object[]> findValorationsByVivacPlaceId(@Param("id") int id);
 
     @Query(value = "SELECT url FROM image WHERE vivac_id = :id", nativeQuery = true)
