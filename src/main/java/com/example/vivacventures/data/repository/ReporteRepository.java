@@ -22,4 +22,6 @@ void deleteById(int id);
 @Query(value = "SELECT COUNT(*) FROM reporte WHERE vivac_place_id = :vivac_place_id", nativeQuery = true)
 int countReportsByVivacPlaceId(@Param("vivac_place_id") int vivac_place_id);
 
+ReporteEntity findByUsername(String username);
+
 }

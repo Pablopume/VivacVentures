@@ -24,10 +24,16 @@ public class ReporteService {
     private final VivacPlaceRepository vivacPlaceRepository;
     private final MapperService mapperService;
     private final ReporteRepository reporteRepository;
-
+    private final UserRepository userRepository;
 
     public void save(Report report) {
+
+        ReporteEntity reporteEntity1= reporteRepository.findByUsername(report.getUsername());
+        if(reporteEntity1!=null){
+            throw new NoExisteException("Ya has reportado un lugar");
+        }
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(report.getVivacPlaceId());
+
         if (vivacPlaceEntity == null) {
             throw new NoExisteException("No existe el lugar con id " + report.getVivacPlaceId());
         }

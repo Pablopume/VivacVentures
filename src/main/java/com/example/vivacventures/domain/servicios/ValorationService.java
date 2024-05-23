@@ -68,6 +68,11 @@ public class ValorationService {
     }
 
     public Valoration saveValoration(Valoration valoration){
+        UserEntity userEntity = userRepository.findByUsername(valoration.getUsername());
+        ValorationEntity valorationEntity1 = valorationRepository.findByUserEntity(userEntity.getId());
+        if (valorationEntity1!=null){
+            throw new AlreadyValorationException("Ya has valorado este lugar");
+        }
         if (valoration.getScore()<=0 || valoration.getScore()>5){
             throw new BadScoreException("El score debe estar entre 1 y 5");
         }

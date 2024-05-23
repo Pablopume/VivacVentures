@@ -42,7 +42,7 @@ public class VivacPlaceEntity {
     @Column(name = "price")
     private Double price;
     @Column(name = "image")
-    @OneToMany(mappedBy = "vivacPlaceEntity", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "vivacPlaceEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<ImageEntity> images;
     @Column(name = "visible")
     private boolean visible;

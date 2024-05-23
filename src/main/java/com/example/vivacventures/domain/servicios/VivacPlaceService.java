@@ -67,7 +67,7 @@ public class VivacPlaceService {
         }
         vivacPlace.setVisible(true);
         VivacPlaceEntity vivacPlaceEntity = mapperService.toVivacPlaceEntity(vivacPlace);
-
+        vivacPlaceEntity.setVisible(true);
         vivacPlaceRepository.save(vivacPlaceEntity);
         return vivacPlace;
     }

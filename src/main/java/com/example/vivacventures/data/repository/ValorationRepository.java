@@ -16,7 +16,7 @@ public interface ValorationRepository extends ListCrudRepository<ValorationEntit
     void deleteById(int id);
 
     ValorationEntity findById(int id);
-
+    ValorationEntity findByUserEntity(int id);
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO valoration (vivac_id, username, score, review, date) VALUES (:vivac_id, :username, :score, :review, :date)", nativeQuery = true)
