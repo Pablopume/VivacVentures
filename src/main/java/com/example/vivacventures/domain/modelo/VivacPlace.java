@@ -25,8 +25,9 @@ public class VivacPlace {
     private double price;
     private List<String> images;
     private boolean isFavorite;
+    private boolean isVisible;
 
-    public VivacPlace(int id, String name, String description, double latitude, double longitude, String username, int capacity, LocalDate date, List<Valoration> valorations, String type, double price, List<String> images) {
+    public VivacPlace(int id, String name, String description, double latitude, double longitude, String username, int capacity, LocalDate date, List<Valoration> valorations, String type, double price, List<String> images, boolean isVisible) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -39,5 +40,6 @@ public class VivacPlace {
         this.type = type;
         this.price = price;
         this.images = images;
+        this.isVisible = isVisible;
     }
 }

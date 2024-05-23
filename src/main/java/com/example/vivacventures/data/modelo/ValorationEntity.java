@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Entity
@@ -27,4 +29,6 @@ public class ValorationEntity {
     @ManyToOne
     @JoinColumn(name = "username", insertable = false, updatable = false)
     private UserEntity userEntity;
+    @Column(name = "date")
+    private LocalDate date;
 }

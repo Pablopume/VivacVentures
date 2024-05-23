@@ -65,7 +65,9 @@ public class VivacPlaceService {
         if ( vivacPlace.getPrice() < 0) {
             throw new BadPriceException("El precio no puede ser negativo");
         }
+        vivacPlace.setVisible(true);
         VivacPlaceEntity vivacPlaceEntity = mapperService.toVivacPlaceEntity(vivacPlace);
+        vivacPlaceEntity.setVisible(true);
         vivacPlaceRepository.save(vivacPlaceEntity);
         return vivacPlace;
     }
@@ -77,14 +79,14 @@ public class VivacPlaceService {
             for (ImageEntity image : images) {
                 imageRepository.delete(image);
             }
-            List<ImageEntity> imagesToSave = vivacPlaceEntity.getImages();
-            for (ImageEntity image : imagesToSave) {
+            List<String> imagesToSave = vivacPlace.getImages();
+            for (String image : imagesToSave) {
                 ImageEntity imageEntity = new ImageEntity();
-                imageEntity.setUrl(image.getUrl());
+                imageEntity.setUrl(image);
                 imageEntity.setVivacPlaceEntity(vivacPlaceEntity);
                 imageRepository.save(imageEntity);
             }
-            vivacPlaceRepository.updateVivacPlaceEntitiesById(vivacPlaceEntity.getId());
+            vivacPlaceRepository.updateVivacPlaceEntitie(vivacPlace.getName(), vivacPlace.getType(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), vivacPlace.getPrice(), vivacPlace.getId());
             return true;
         } else {
             throw new NoExisteException("No se ha podido actualizar el lugar");
@@ -92,7 +94,7 @@ public class VivacPlaceService {
     }
 
     public VivacPlace getVivacPlaceById(int id) {
-        return mapperService.toVivacPlace(vivacPlaceRepository.getVivacPlaceEntitiesById(id));
+        return mapperService.toVivacPlace( vivacPlaceRepository.getVivacPlaceEntitiesById(id));
     }
 
     public VivacPlace getVivacPlaceByIdAndUsername(int id, String username) {

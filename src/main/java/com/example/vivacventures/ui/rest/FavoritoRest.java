@@ -21,7 +21,7 @@ public class FavoritoRest {
         favoritoService.saveFavorito(username, vivacId);
     }
 
-    @PostMapping("/favorito/delete")
+    @DeleteMapping("/favorito/delete")
     @Secured("ROLE_USER")
     public void deleteFavorito(@RequestParam("username")String username,@RequestParam("vivacId") int vivacId) {
         favoritoService.deleteFavorito(username, vivacId);

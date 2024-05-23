@@ -1,0 +1,24 @@
+###login admin
+GET http://localhost:8764/auth/login?username=pablo&password=pume
+Accept: application/json
+Content-Type: application/json
+
+> {%
+    client.global.set("token", response.body.accessToken);
+    client.global.set("refresh", response.body.refreshToken);
+%}
+
+
+### get all vivac
+GET http://localhost:8764/vivacplaces
+Authorization: Bearer {{token}}
+
+Accept: application/json
+Content-Type: application/json
+
+### delete vivac
+DELETE http://localhost:8764/delete/23
+Authorization: Bearer {{token}}
+
+Accept: application/json
+Content-Type: application/json

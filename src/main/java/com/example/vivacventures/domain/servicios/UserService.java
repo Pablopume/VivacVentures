@@ -5,6 +5,7 @@ import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.mappers.UserEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.domain.modelo.User;
+import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.modelo.exceptions.*;
 import com.example.vivacventures.security.KeyProvider;
@@ -22,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -47,6 +50,14 @@ public class UserService {
     @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_USERKEYSTORE)
     private String userkeystore;
 
+
+    public UserAmigoDTO getUserAmigo(String username) {
+        return userRepository.getAllUsersWithVivacPlaceCount(username).stream()
+                .map(user -> new UserAmigoDTO((String) user[0], ((Long) user[1]).intValue()))
+                .findFirst()
+                .orElseThrow(() -> new NoExisteException("Usuario no encontrado"));
+    }
+
     public LoginToken doLogin(String user, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user, password));
@@ -58,7 +69,7 @@ public class UserService {
             String refreshToken = generateRefreshToken(user);
             return new LoginToken(accessToken, refreshToken);
         }
-        //nunca va a llegar aquí ya que si no se autentica lanza la excepcion de hibernate, por eso devuelvo una excepcion
+
         else {
             throw new NotVerificatedException("Usuario o contraseña incorrectos");
         }
