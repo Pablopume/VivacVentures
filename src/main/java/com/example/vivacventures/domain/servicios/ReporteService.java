@@ -24,7 +24,6 @@ public class ReporteService {
     private final VivacPlaceRepository vivacPlaceRepository;
     private final MapperService mapperService;
     private final ReporteRepository reporteRepository;
-    private final UserRepository userRepository;
 
     public void save(Report report) {
 

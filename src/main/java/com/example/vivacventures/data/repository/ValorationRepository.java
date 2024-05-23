@@ -1,5 +1,6 @@
 package com.example.vivacventures.data.repository;
 
+import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.ValorationEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,7 +17,7 @@ public interface ValorationRepository extends ListCrudRepository<ValorationEntit
     void deleteById(int id);
 
     ValorationEntity findById(int id);
-    ValorationEntity findByUserEntity(int id);
+    ValorationEntity findByUserEntity(UserEntity userEntity);
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO valoration (vivac_id, username, score, review, date) VALUES (:vivac_id, :username, :score, :review, :date)", nativeQuery = true)

@@ -69,7 +69,7 @@ public class ValorationService {
 
     public Valoration saveValoration(Valoration valoration){
         UserEntity userEntity = userRepository.findByUsername(valoration.getUsername());
-        ValorationEntity valorationEntity1 = valorationRepository.findByUserEntity(userEntity.getId());
+        ValorationEntity valorationEntity1 = valorationRepository.findByUserEntity(userEntity);
         if (valorationEntity1!=null){
             throw new AlreadyValorationException("Ya has valorado este lugar");
         }
