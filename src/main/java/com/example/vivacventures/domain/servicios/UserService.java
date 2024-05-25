@@ -1,33 +1,19 @@
 package com.example.vivacventures.domain.servicios;
 import com.example.vivacventures.common.Constantes;
-import com.example.vivacventures.data.modelo.LoginToken;
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.mappers.UserEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
-import com.example.vivacventures.domain.modelo.User;
 import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.modelo.exceptions.*;
-import com.example.vivacventures.security.KeyProvider;
 import com.example.vivacventures.util.Utils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.UUID;
 @Service
 @RequiredArgsConstructor
@@ -35,21 +21,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserEntityMapper userEntityMapper;
     private final PasswordEncoder passwordEncoder;
-    private final KeyProvider keyProvider;
-    private final Utils utils;
     private final MandarMail mandarMail;
-    private final AuthenticationManager authenticationManager;
-    @Value(Constantes.APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION)
-    private int refreshExpiration;
     @Value(Constantes.APPLICATION_SECURITY_JWT_ACCESS_TOKEN_EXPIRATION)
     private int accessExpiration;
-    @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_PATH)
-    private String path;
-    @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_PASSWORD)
-    private String password;
-    @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_USERKEYSTORE)
-    private String userkeystore;
-
 
     public UserAmigoDTO getUserAmigo(String username) {
         return userRepository.getAllUsersWithVivacPlaceCount(username).stream()
@@ -58,22 +32,7 @@ public class UserService {
                 .orElseThrow(() -> new NoExisteException("Usuario no encontrado"));
     }
 
-    public LoginToken doLogin(String user, String password) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user, password));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        if (authentication.isAuthenticated()) {
-            String accessToken = generateToken(user);
-            String refreshToken = generateRefreshToken(user);
-            return new LoginToken(accessToken, refreshToken);
-        }
-
-        else {
-            throw new NotVerificatedException("Usuario o contraseña incorrectos");
-        }
-    }
 
     public void changePassword(String email, String newPassword, String temporalPaswword) {
         UserEntity user = userRepository.findByEmail(email);
@@ -115,7 +74,7 @@ public class UserService {
                 userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
                 userEntity.setRandomStringVerified(randomString);
                 userEntity.setVerificationExpirationDate(LocalDateTime.now());
-                String url = "http://localhost:8764/auth/verified?verifiedString=" + userEntity.getRandomStringVerified();
+                String url = ServicioConstantes.urlVerify + userEntity.getRandomStringVerified();
 
                 try {
                     mandarMail.generateAndSendEmail(userEntity.getEmail(),
@@ -137,7 +96,7 @@ public class UserService {
     public String autenticarse(String verifiedString) {
         String message = "";
         UserEntity user = userRepository.findByRandomStringVerified(verifiedString);
-        String botonReenviar = "<a href=\"http://localhost:8764/auth/resendEmail?verifiedString=" + verifiedString + "\">Reenviar link</a>";
+        String botonReenviar = ServicioConstantes.resend + verifiedString + "\">Reenviar link</a>";
 
         if (user.getRandomStringVerified() != null) {
             if (LocalDateTime.now().isBefore(user.getVerificationExpirationDate().plusSeconds(accessExpiration))) {
@@ -157,9 +116,9 @@ public class UserService {
         String randomString = UUID.randomUUID().toString();
         userRepository.updateUserStringVerified(userEntity.getUsername(), randomString, LocalDateTime.now());
 
-        String url = "http://localhost:8764/auth/verified?verifiedString=" + randomString;
+        String url = ServicioConstantes.urlVerified + randomString;
 
-        MandarMail mandarMail = new MandarMail();
+
         try {
             mandarMail.generateAndSendEmail(userEntity.getEmail(),
                     "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
@@ -170,60 +129,5 @@ public class UserService {
         return "Email reenviado. Revise su correo";
     }
 
-    public String generateToken(String nombre) {
 
-        User credentials = userEntityMapper.toUser(userRepository.findByUsername(nombre));
-        return Jwts.builder()
-                .setSubject(credentials.getUsername())
-                .claim("rol", credentials.getRol())
-                .claim("id", credentials.getId())
-                .setIssuedAt(new Date())
-                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(accessExpiration)
-                        .atZone(ZoneId.systemDefault()).toInstant()))
-                .signWith(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
-                .compact();
-
-    }
-
-    public String generateRefreshToken(String nombre) {
-        User credentials = userEntityMapper.toUser(userRepository.findByUsername(nombre));
-        return Jwts.builder()
-                .setSubject(credentials.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(refreshExpiration)
-                        .atZone(ZoneId.systemDefault()).toInstant()))
-                .signWith(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
-                .compact();
-    }
-
-
-    public String refreshToken(String refreshToken) {
-        if (validateToken(refreshToken)) {
-            String username = Jwts.parserBuilder()
-                    .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
-                    .build()
-                    .parseClaimsJws(refreshToken)
-                    .getBody()
-                    .getSubject();
-            return generateToken(username);
-        }
-
-        return null;
-    }
-
-    private boolean validateToken(String refreshtoken) {
-        try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPublic())
-                    .build()
-                    .parseClaimsJws(refreshtoken);
-
-
-            long expirationMillis = claimsJws.getBody().getExpiration().getTime();
-            return System.currentTimeMillis() < expirationMillis;
-
-        } catch (ExpiredJwtException e) {
-            throw new Exception401("Token expirado");
-        }
-    }
 }
