@@ -99,6 +99,16 @@ public class MapperService {
 
     }
 
+    public AmigoEntity toAmigoEntity(Amigo amigo) {
+        UserEntity requester = userRepository.findByUsername(amigo.getRequester());
+        UserEntity requested = userRepository.findByUsername(amigo.getRequested());
+        return new AmigoEntity(amigo.getId(), requester, requested, amigo.isStatus());
+    }
+
+    public Amigo toAmigo(AmigoEntity amigoEntity) {
+        return new Amigo(amigoEntity.getId(), amigoEntity.getRequester().getUsername(), amigoEntity.getRequested().getUsername(), amigoEntity.isStatus());
+    }
+
     public FavoritesVivacPlaces toFavoritesVivacPlaces(VivacPlaceEntity vivacPlaceEntity) {
         double valorations = 0;
         String image = null;

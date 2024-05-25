@@ -1,0 +1,52 @@
+package com.example.vivacventures.domain.servicios;
+
+import com.example.vivacventures.data.modelo.AmigoEntity;
+import com.example.vivacventures.data.modelo.UserEntity;
+import com.example.vivacventures.data.repository.AmigoRepository;
+import com.example.vivacventures.data.repository.UserRepository;
+import com.example.vivacventures.domain.modelo.Amigo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AmigoService {
+    private final AmigoRepository amigoRepository;
+    private final MapperService mapperService;
+    private final UserRepository userRepository;
+
+    public void mandarPeticionAmistad(Amigo amigo) {
+        amigo.setStatus(false);
+        AmigoEntity amigoEntity = mapperService.toAmigoEntity(amigo);
+        amigoRepository.save(amigoEntity);
+    }
+
+    public void aceptarPeticionAmistad(Amigo amigo) {
+        AmigoEntity amigoEntity = amigoRepository.findById(amigo.getId());
+        amigoEntity.setStatus(true);
+        amigoRepository.save(amigoEntity);
+    }
+
+    public void rechazarPeticionAmistad(Amigo amigo) {
+        AmigoEntity amigoEntity = amigoRepository.findById(amigo.getId());
+        amigoRepository.delete(amigoEntity);
+    }
+
+    public void eliminarAmigo(Amigo amigo) {
+        AmigoEntity amigoEntity = amigoRepository.findById(amigo.getId());
+        amigoRepository.delete(amigoEntity);
+    }
+
+    public List<Amigo> getAmigos(String username) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        List<AmigoEntity> amigosEntity = amigoRepository.findByRequester(userEntity);
+        List<Amigo> amigos = new ArrayList<>();
+        amigosEntity.forEach(amigoEntity -> amigos.add(mapperService.toAmigo(amigoEntity)));
+        return amigos;
+    }
+
+
+}
