@@ -42,9 +42,11 @@ public class AmigoService {
 
     public List<Amigo> getAmigos(String username) {
         UserEntity userEntity = userRepository.findByUsername(username);
-        List<AmigoEntity> amigosEntity = amigoRepository.findByRequester(userEntity);
         List<Amigo> amigos = new ArrayList<>();
+        List<AmigoEntity> amigosEntity = amigoRepository.findFriendsByUser(userEntity);
         amigosEntity.forEach(amigoEntity -> amigos.add(mapperService.toAmigo(amigoEntity)));
+        List<AmigoEntity> pendingRequests = amigoRepository.findPendingRequestsByUser(userEntity);
+        pendingRequests.forEach(amigoEntity -> amigos.add(mapperService.toAmigo(amigoEntity)));
         return amigos;
     }
 
