@@ -29,13 +29,6 @@ public class CredentialsRest {
         return userService.resendEmail(verifiedString);
     }
 
-    @GetMapping("/auth/refreshToken")
-    public LoginToken refreshToken(@RequestParam("refreshToken") String refreshToken) {
-        String newToken = userService.refreshToken(refreshToken);
-        return new LoginToken(newToken, refreshToken);
-
-    }
-
     @GetMapping("/amigo")
     public UserAmigoDTO getAmigos(@RequestParam String username) {
         return userService.getUserAmigo(username);
@@ -51,11 +44,5 @@ public class CredentialsRest {
     public ResponseEntity<Void> resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String temporalPassword) {
         userService.changePassword(email, newPassword,temporalPassword);
         return ResponseEntity.ok().build();
-    }
-
-
-    @GetMapping("/auth/login")
-    public LoginToken login(@RequestParam String username, @RequestParam String password) {
-        return userService.doLogin(username, password);
     }
 }
