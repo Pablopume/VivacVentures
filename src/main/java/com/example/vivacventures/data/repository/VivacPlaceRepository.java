@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntity, Long> {
 
-
+    VivacPlaceEntity findById(int id);
     @Query(value = "SELECT vp.id, vp.name, vp.type, AVG(vr.score) as valorations, (SELECT url FROM image WHERE vivac_id = vp.id LIMIT 1) as images, (SELECT COUNT(*) FROM favorito f INNER JOIN user u ON f.user_id = u.id WHERE u.username = :username AND f.vivac_place_id = vp.id) > 0 as isFavorite FROM vivac_place vp LEFT JOIN valoration vr ON vp.id = vr.vivac_id WHERE vp.type = :type GROUP BY vp.id", nativeQuery = true)
     List<Object[]> getVivacByTypeAndUser(String type, String username);
 

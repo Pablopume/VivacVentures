@@ -1,17 +1,12 @@
 package com.example.vivacventures.domain.servicios;
 
-import com.example.vivacventures.data.modelo.FavoritoEntity;
-import com.example.vivacventures.data.modelo.ListaEntity;
-import com.example.vivacventures.data.modelo.ListaUserEntity;
-import com.example.vivacventures.data.modelo.UserEntity;
-import com.example.vivacventures.data.repository.FavoritoRepository;
-import com.example.vivacventures.data.repository.ListaRepository;
-import com.example.vivacventures.data.repository.ListaUserRepository;
-import com.example.vivacventures.data.repository.UserRepository;
+import com.example.vivacventures.data.modelo.*;
+import com.example.vivacventures.data.repository.*;
 import com.example.vivacventures.domain.modelo.Lista;
 import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -23,6 +18,7 @@ public class ListaService {
     private final UserRepository userRepository;
     private final ListaUserRepository listaUserRepository;
     private final FavoritoRepository favoritoRepository;
+    private final VivacPlaceRepository vivacPlaceRepository;
 
     public void saveLista(Lista lista) {
         ListaEntity listaEntity = mapperService.toListaEntity(lista);
@@ -34,14 +30,14 @@ public class ListaService {
         listaRepository.deleteById(id);
     }
 
-    public void addFavoritoToLista(int id, int favoritoId) {
+    public void addFavoritoToLista(int id, int vivacId) {
         ListaEntity listaEntity = listaRepository.findById(id);
-        FavoritoEntity favoritoEntity = favoritoRepository.findById(favoritoId);
+        VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.findById(vivacId);
+        FavoritoEntity favoritoEntity = new FavoritoEntity(listaEntity,vivacPlaceEntity);
         if (listaEntity == null)
             throw new NoExisteException("No existe la lista");
         else
-            listaEntity.getFavoritos().add(favoritoEntity);
-        favoritoRepository.save(favoritoEntity);
+            favoritoRepository.save(favoritoEntity);
 
     }
 
@@ -54,6 +50,7 @@ public class ListaService {
             listaUserRepository.save(new ListaUserEntity(0, listaEntity, userEntity));
     }
 
+    @Transactional
     public void deleteSharedList(int id, String username) {
         ListaEntity listaEntity = listaRepository.findById(id);
         UserEntity userEntity = userRepository.findByUsername(username);

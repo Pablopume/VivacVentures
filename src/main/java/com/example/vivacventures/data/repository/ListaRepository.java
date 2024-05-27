@@ -12,7 +12,8 @@ import java.util.List;
 
 @Repository
 public interface ListaRepository extends ListCrudRepository<ListaEntity, Long> {
-
+//con fetch de la lista de favoritos
+    @Query("SELECT l FROM ListaEntity l LEFT JOIN FETCH l.favoritos WHERE l.id = :id")
     ListaEntity findById(int id);
     void deleteById(int id);
 

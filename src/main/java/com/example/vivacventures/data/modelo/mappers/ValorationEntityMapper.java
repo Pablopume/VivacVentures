@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface ValorationEntityMapper {
     ValorationEntity toValorationEntity(Valoration valoration);
-     Valoration toValoration(ValorationEntity valorationEntity);
+
+    Valoration toValoration(ValorationEntity valorationEntity);
 
 }
