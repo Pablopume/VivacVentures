@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -37,4 +38,9 @@ public class UserEntity {
     private List<ValorationEntity> valorations;
     @Column(name = "temporalPassword")
     private String temporalPassword;
+    @OneToMany(mappedBy = "requester")
+    private List<AmigoEntity> amigos;
+    @OneToMany(mappedBy = "requested")
+    private List<AmigoEntity> amigos2;
+
 }
