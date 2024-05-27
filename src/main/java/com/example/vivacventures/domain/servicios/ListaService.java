@@ -13,6 +13,8 @@ import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 @RequiredArgsConstructor
 public class ListaService {
@@ -24,6 +26,7 @@ public class ListaService {
 
     public void saveLista(Lista lista) {
         ListaEntity listaEntity = mapperService.toListaEntity(lista);
+        lista.setFavoritos(new ArrayList<>());
         listaRepository.save(listaEntity);
     }
 
