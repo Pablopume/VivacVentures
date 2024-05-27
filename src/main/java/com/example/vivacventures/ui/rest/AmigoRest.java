@@ -13,29 +13,29 @@ import java.util.List;
 public class AmigoRest {
     private final AmigoService amigoService;
 
-    @PutMapping("/accept")
+    @PutMapping("/friends/accept")
     @Secured("ROLE_USER")
     public void acceptFriendRequest(@RequestBody Amigo amigo) {
         amigoService.aceptarPeticionAmistad(amigo);
     }
 
 
-    @DeleteMapping("/reject")
+    @DeleteMapping("/friends/reject/{id}")
     @Secured("ROLE_USER")
-    public void rejectFriendRequest(@RequestBody Amigo amigo) {
-        amigoService.rechazarPeticionAmistad(amigo);
+    public void rejectFriendRequest(@PathVariable int id) {
+        amigoService.rechazarPeticionAmistad(id);
     }
 
-    @PostMapping("/send")
+    @PostMapping("/friends/send")
     @Secured("ROLE_USER")
     public void sendFriendRequest(@RequestBody Amigo amigo) {
         amigoService.mandarPeticionAmistad(amigo);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/friends/delete/{id}")
     @Secured("ROLE_USER")
-    public void deleteFriend(@RequestBody Amigo amigo) {
-        amigoService.eliminarAmigo(amigo);
+    public void deleteFriend(@PathVariable int id) {
+        amigoService.eliminarAmigo(id);
     }
 
     @GetMapping("/friends")

@@ -30,13 +30,13 @@ public class AmigoService {
         amigoRepository.save(amigoEntity);
     }
 
-    public void rechazarPeticionAmistad(Amigo amigo) {
-        AmigoEntity amigoEntity = amigoRepository.findById(amigo.getId());
+    public void rechazarPeticionAmistad(int id) {
+        AmigoEntity amigoEntity = amigoRepository.findById(id);
         amigoRepository.delete(amigoEntity);
     }
 
-    public void eliminarAmigo(Amigo amigo) {
-        AmigoEntity amigoEntity = amigoRepository.findById(amigo.getId());
+    public void eliminarAmigo(int id) {
+        AmigoEntity amigoEntity = amigoRepository.findById(id);
         amigoRepository.delete(amigoEntity);
     }
 
