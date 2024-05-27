@@ -17,14 +17,14 @@ public class FavoritoRest {
 
     @PostMapping("/favorito")
     @Secured("ROLE_USER")
-    public void saveFavorito(@RequestParam("username")String username,@RequestParam("vivacId") int vivacId) {
-        favoritoService.saveFavorito(username, vivacId);
+    public void saveFavorito(@RequestParam("listaId")int id,@RequestParam("vivacId") int vivacId) {
+        favoritoService.saveFavorito(id, vivacId);
     }
 
     @DeleteMapping("/favorito/delete")
     @Secured("ROLE_USER")
-    public void deleteFavorito(@RequestParam("username")String username,@RequestParam("vivacId") int vivacId) {
-        favoritoService.deleteFavorito(username, vivacId);
+    public void deleteFavorito(@RequestParam("listaId")int listaId,@RequestParam("vivacId") int vivacId) {
+        favoritoService.deleteFavorito(listaId, vivacId);
     }
 
     @GetMapping("/favoritos/{username}")

@@ -47,6 +47,11 @@ public class MapperService {
         return new Report(reportEntity.getId(), reportEntity.getUsername(), reportEntity.getVivacPlaceEntity().getId(), reportEntity.getDescription());
     }
 
+
+    public ListaEntity toListaEntity(Lista lista) {
+        UserEntity userEntity = userRepository.findByUsername(lista.getUsername());
+        return new ListaEntity(lista.getId(), lista.getName(), userEntity,lista.getFavoritos());
+    }
     public ReporteEntity toReportEntity(Report report) {
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(report.getVivacPlaceId());
         return new ReporteEntity(report.getId(), report.getUsername(), vivacPlaceEntity, report.getDescription());

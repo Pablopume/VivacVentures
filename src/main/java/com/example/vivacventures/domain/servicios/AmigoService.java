@@ -21,6 +21,11 @@ public class AmigoService {
     public void mandarPeticionAmistad(Amigo amigo) {
         amigo.setStatus(false);
         AmigoEntity amigoEntity = mapperService.toAmigoEntity(amigo);
+//        if (amigoRepository.existsByRequesterAndRequested(mapperService.toUserEntity(amigoEntity.getRequester()), mapperService.toUserEntity(amigo.getRequested()))) {
+  //          return;
+    //    }
+
+
         amigoRepository.save(amigoEntity);
     }
 
