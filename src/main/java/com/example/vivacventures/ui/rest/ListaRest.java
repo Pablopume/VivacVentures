@@ -50,6 +50,11 @@ public class ListaRest {
     public List<ListaDTO> getLists(@RequestParam("username") String username) {
         return listaService.getLists(username);
     }
+    @Secured("ROLE_USER")
+    @GetMapping("/list/{id}")
+    public ListaDTO getList(@PathVariable("id") int id) {
+        return listaService.getList(id);
+    }
 
 
 }
