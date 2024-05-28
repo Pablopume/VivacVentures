@@ -14,6 +14,8 @@ import java.util.List;
 public class VivacPlaceRest {
     private final VivacPlaceService vivacPlaceService;
 
+
+
     @GetMapping("/vivacplaces")
     @Secured("ROLE_USER")
     public List<VivacPlace> getVivacPlaces() {

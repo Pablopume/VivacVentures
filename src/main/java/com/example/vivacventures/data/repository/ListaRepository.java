@@ -16,6 +16,9 @@ public interface ListaRepository extends ListCrudRepository<ListaEntity, Long> {
     @Query("SELECT l FROM ListaEntity l LEFT JOIN FETCH l.favoritos WHERE l.id = :id")
     ListaEntity findById(int id);
     void deleteById(int id);
+    @Query("SELECT l FROM ListaEntity l LEFT JOIN FETCH l.favoritos  WHERE l.user = :user")
+    List<ListaEntity> findAllByUser(@Param("user") UserEntity user);
+
 
 
 }

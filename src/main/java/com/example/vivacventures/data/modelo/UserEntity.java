@@ -49,4 +49,7 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<ListaUserEntity> listasAcceso;
 
+    public UserEntity(int id) {
+        this.id = id;
+    }
 }

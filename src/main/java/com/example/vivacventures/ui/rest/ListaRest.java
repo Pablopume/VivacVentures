@@ -1,10 +1,13 @@
 package com.example.vivacventures.ui.rest;
 
 import com.example.vivacventures.domain.modelo.Lista;
+import com.example.vivacventures.domain.modelo.dto.ListaDTO;
 import com.example.vivacventures.domain.servicios.ListaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,5 +40,12 @@ public class ListaRest {
     public void addFavoriteToList(@RequestParam("id") int id, @RequestParam("vivacId") int vivacId) {
         listaService.addFavoritoToLista(id, vivacId);
     }
+
+    @Secured("ROLE_USER")
+    @GetMapping("/lists")
+    public List<ListaDTO> getLists(@RequestParam("username") String username) {
+        return listaService.getLists(username);
+    }
+
 
 }

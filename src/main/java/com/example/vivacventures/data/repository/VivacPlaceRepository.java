@@ -64,5 +64,6 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
 
 
 
+
 }
 

@@ -24,4 +24,5 @@ public interface AmigoRepository extends ListCrudRepository<AmigoEntity, Long> {
     List<AmigoEntity> findPendingRequestsByUser(@Param("user") UserEntity user);
 
 
+
 }

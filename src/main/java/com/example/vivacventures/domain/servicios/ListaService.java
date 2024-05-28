@@ -3,12 +3,15 @@ package com.example.vivacventures.domain.servicios;
 import com.example.vivacventures.data.modelo.*;
 import com.example.vivacventures.data.repository.*;
 import com.example.vivacventures.domain.modelo.Lista;
+import com.example.vivacventures.domain.modelo.VivacPlace;
+import com.example.vivacventures.domain.modelo.dto.ListaDTO;
 import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +43,19 @@ public class ListaService {
             favoritoRepository.save(favoritoEntity);
 
     }
+
+
+    public List<ListaDTO> getLists(String username) {
+
+        UserEntity userEntity = userRepository.findByUsername(username);
+        List<ListaEntity> listaEntities = listaRepository.findAllByUser(userEntity);
+        List<ListaDTO> listas = new ArrayList<>();
+        listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(listaEntity)));
+        return listas;
+    }
+
+
+
 
     public void shareList(int id, String username) {
         ListaEntity listaEntity = listaRepository.findById(id);
