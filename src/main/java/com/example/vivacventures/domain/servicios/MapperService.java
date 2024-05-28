@@ -107,8 +107,10 @@ public class MapperService {
 
     }
 
-    public ListaDTO toListaDTO(ListaEntity listaEntity) {
-        return new ListaDTO(listaEntity.getId(), listaEntity.getName());
+    public ListaDTO toListaDTO(Object[] listaEntity) {
+        int id = (int) listaEntity[0];
+        String name = (String) listaEntity[1];
+        return new ListaDTO(id, name);
     }
 
     public AmigoEntity toAmigoEntity(Amigo amigo) {

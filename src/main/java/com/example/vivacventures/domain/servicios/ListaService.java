@@ -47,7 +47,7 @@ public class ListaService {
 
 
     public List<ListaDTO> getLists(String username) {
-        List<ListaEntity> listaEntities = listaRepository.findIdAndNameByUsername(username);
+        List<Object[]> listaEntities = listaRepository.findIdAndNameByUsername(username);
         List<ListaDTO> listas = new ArrayList<>();
         listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(listaEntity)));
 
