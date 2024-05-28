@@ -2,6 +2,7 @@ package com.example.vivacventures.domain.servicios;
 
 import com.example.vivacventures.data.modelo.*;
 import com.example.vivacventures.data.repository.*;
+import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.Lista;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.modelo.dto.ListaDTO;
@@ -46,11 +47,21 @@ public class ListaService {
 
 
     public List<ListaDTO> getLists(String username) {
-
-        UserEntity userEntity = userRepository.findByUsername(username);
-        List<ListaEntity> listaEntities = listaRepository.findAllByUser(userEntity);
+        List<ListaEntity> listaEntities = listaRepository.findIdAndNameByUsername(username);
         List<ListaDTO> listas = new ArrayList<>();
         listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(listaEntity)));
+
+        for (ListaDTO lista : listas) {
+            List<Integer> vivacPlaceIds = listaRepository.findVivacPlaceIdsByListaId(lista.getId());
+            List<FavoritesVivacPlaces> vivacPlaces = new ArrayList<>();
+            for (Integer id : vivacPlaceIds) {
+                List<Object[]> vivacPlaceDataList = vivacPlaceRepository.getVivacPlaceWithFavouritesById(id, username);
+                Object[] vivacPlaceData = vivacPlaceDataList.isEmpty() ? null : vivacPlaceDataList.get(0);
+                vivacPlaces.add(mapperService.objectToFavoriteVivacPlace(vivacPlaceData));
+            }
+            lista.setVivacPlaces(vivacPlaces);
+        }
+
         return listas;
     }
 

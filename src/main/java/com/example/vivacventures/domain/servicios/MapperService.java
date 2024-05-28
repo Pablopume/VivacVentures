@@ -108,9 +108,7 @@ public class MapperService {
     }
 
     public ListaDTO toListaDTO(ListaEntity listaEntity) {
-        List<VivacPlace> favoritos = new ArrayList<>();
-        listaEntity.getFavoritos().forEach(favoritoEntity -> favoritos.add(toVivacPlace(favoritoEntity.getVivacPlace())));
-        return new ListaDTO(listaEntity.getId(), listaEntity.getName(), listaEntity.getUser().getUsername(), favoritos);
+        return new ListaDTO(listaEntity.getId(), listaEntity.getName());
     }
 
     public AmigoEntity toAmigoEntity(Amigo amigo) {
