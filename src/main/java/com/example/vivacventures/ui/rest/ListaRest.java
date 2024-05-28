@@ -56,5 +56,18 @@ public class ListaRest {
         return listaService.getList(id);
     }
 
+    @Secured("ROLE_USER")
+    @GetMapping("/list/userAndVivacPlace")
+    public List<ListaDTO> getListsByUserAndVivacPlace(@RequestParam("username") String username, @RequestParam("vivacPlaceId") int vivacPlaceId) {
+        return listaService.getListsByUsernameAndVivacPlaceId(username, vivacPlaceId);
+    }
+
+
+    @Secured("ROLE_USER")
+    @GetMapping("/list/shared")
+    public List<ListaDTO> getSharedLists(@RequestParam("id") int id) {
+        return listaService.getListsByUserId(id);
+    }
+
 
 }

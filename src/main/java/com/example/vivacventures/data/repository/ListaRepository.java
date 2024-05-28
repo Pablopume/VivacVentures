@@ -26,5 +26,11 @@ public interface ListaRepository extends ListCrudRepository<ListaEntity, Long> {
     @Query("SELECT f.vivacPlace.id FROM FavoritoEntity f WHERE f.lista.id = :listaId")
     List<Integer> findVivacPlaceIdsByListaId(@Param("listaId") int listaId);
 
+    //Listas de un usuario con una vivacplace determinada en favoritos
+    @Query("select l from ListaEntity l join l.favoritos f where l.user.username = :username and f.vivacPlace.id = :vivacPlaceId")
+    List<ListaEntity> findByUserAndVivacPlaceId(String username, int vivacPlaceId);
+//Get listas shared with an specific user by id with the  lista_user table
 
+    @Query("SELECT l FROM ListaEntity l JOIN l.listaUsers lu WHERE lu.user.id = :userId")
+    List<ListaEntity> getByUserId(@Param("userId") int userId);
 }

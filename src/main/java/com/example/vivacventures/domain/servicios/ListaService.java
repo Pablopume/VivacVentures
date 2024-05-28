@@ -71,8 +71,22 @@ public class ListaService {
     }
 
 
+    public List<ListaDTO> getListsByUsernameAndVivacPlaceId(String username, int vivacPlaceId) {
+        List<ListaEntity> listaEntities = listaRepository.findByUserAndVivacPlaceId(username, vivacPlaceId);
+        List<ListaDTO> listas = new ArrayList<>();
+        listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(new Object[]{listaEntity.getId(), listaEntity.getName()})));
+        listas.forEach(lista -> lista.setUsername(username));
+
+        return listas;
+    }
 
 
+    public List<ListaDTO> getListsByUserId(int userId) {
+        List<ListaEntity> listaEntities = listaRepository.getByUserId(userId);
+        List<ListaDTO> listas = new ArrayList<>();
+        listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(new Object[]{listaEntity.getId(), listaEntity.getName()})));
+        return listas;
+    }
     public void shareList(int id, String username) {
         ListaEntity listaEntity = listaRepository.findById(id);
         UserEntity userEntity = userRepository.findByUsername(username);

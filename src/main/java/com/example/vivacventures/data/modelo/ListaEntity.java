@@ -29,6 +29,16 @@ public class ListaEntity {
 
     @OneToMany(mappedBy = "lista")
     private List<FavoritoEntity> favoritos;
+
+    @OneToMany(mappedBy = "lista")
+    private List<ListaUserEntity> listaUsers;
+
+    public ListaEntity(int id, String name, UserEntity user, List<FavoritoEntity> favoritos) {
+        this.id = id;
+        this.name = name;
+        this.user = user;
+        this.favoritos = favoritos;
+    }
 }
 
 

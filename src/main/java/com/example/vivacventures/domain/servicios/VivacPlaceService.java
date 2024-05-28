@@ -109,7 +109,8 @@ public class VivacPlaceService {
         return mapperService.toVivacPlace(vivacPlaceRepository.getVivacPlaceEntitiesById(id));
     }
 
-    public VivacPlace getVivacPlaceByIdAndUsername(int id, String username) {
+    public VivacPlace getVivacPlaceByIdAndUsername(int id, String token) {
+        String username = usernameFromToken(token);
         List<Object[]> vivacPlaceDataList = vivacPlaceRepository.findVivacPlaceByIdAndUsername(id, username);
         Object[] vivacPlaceData = vivacPlaceDataList.isEmpty() ? null : vivacPlaceDataList.get(0);
         List<Object[]> valorationData = vivacPlaceRepository.findValorationsByVivacPlaceId(id);
