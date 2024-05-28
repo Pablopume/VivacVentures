@@ -23,6 +23,9 @@ public interface AmigoRepository extends ListCrudRepository<AmigoEntity, Long> {
     @Query("SELECT a FROM AmigoEntity a WHERE (a.requested = :user) AND a.status = false")
     List<AmigoEntity> findPendingRequestsByUser(@Param("user") UserEntity user);
 
+    AmigoEntity findByRequesterAndRequested(UserEntity requester, UserEntity requested);
+
+
 
 
 }
