@@ -22,4 +22,10 @@ public class ListaDTO {
         this.id = id;
         this.name = name;
     }
+
+    public ListaDTO(int id, String name, String username) {
+        this.id = id;
+        this.name = name;
+        this.username = username;
+    }
 }

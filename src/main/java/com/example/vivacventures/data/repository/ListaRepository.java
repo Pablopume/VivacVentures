@@ -20,6 +20,9 @@ public interface ListaRepository extends ListCrudRepository<ListaEntity, Long> {
     @Query("SELECT l.id, l.name FROM ListaEntity l JOIN l.user u WHERE u.username = :username")
     List<Object[]> findIdAndNameByUsername(@Param("username") String username);
 
+    @Query("SELECT l.id, l.name, u.username FROM ListaEntity l JOIN l.user u WHERE l.id = :id")
+    List<Object[]> findIdNameAndUsernameById(@Param("id") int listaId);
+
     @Query("SELECT f.vivacPlace.id FROM FavoritoEntity f WHERE f.lista.id = :listaId")
     List<Integer> findVivacPlaceIdsByListaId(@Param("listaId") int listaId);
 

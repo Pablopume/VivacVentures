@@ -113,6 +113,15 @@ public class MapperService {
         return new ListaDTO(id, name);
     }
 
+    public ListaDTO toListaWithUserDTO(Object[] listaEntity) {
+        int id = (int) listaEntity[0];
+        String name = (String) listaEntity[1];
+        String username = (String) listaEntity[2];
+        return new ListaDTO(id, name, username);
+    }
+
+
+
     public AmigoEntity toAmigoEntity(Amigo amigo) {
         UserEntity requester = userRepository.findByUsername(amigo.getRequester());
         UserEntity requested = userRepository.findByUsername(amigo.getRequested());

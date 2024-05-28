@@ -65,6 +65,19 @@ public class ListaService {
         return listas;
     }
 
+    public ListaDTO getList(int id) {
+        List<Object[]> listaEntities = listaRepository.findIdNameAndUsernameById(id);
+        Object[] listaEntity = listaEntities.isEmpty() ? null : listaEntities.get(0);
+        ListaDTO lista = mapperService.toListaWithUserDTO(listaEntity);
+        List<Integer> vivacPlaceIds = listaRepository.findVivacPlaceIdsByListaId(lista.getId());
+        List<FavoritesVivacPlaces> vivacPlaces = new ArrayList<>();
+        List<Object[]> vivacPlaceDataList = vivacPlaceRepository.getVivacPlaceWithFavouritesById(id, lista.getUsername());
+        Object[] vivacPlaceData = vivacPlaceDataList.isEmpty() ? null : vivacPlaceDataList.get(0);
+        vivacPlaces.add(mapperService.objectToFavoriteVivacPlace(vivacPlaceData));
+
+        return lista;
+    }
+
 
 
 
