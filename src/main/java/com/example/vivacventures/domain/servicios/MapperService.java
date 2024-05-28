@@ -120,6 +120,10 @@ public class MapperService {
         return new ListaDTO(id, name, username);
     }
 
+    public int objectToInt(Object object){
+        return (int) object;
+    }
+
 
 
     public AmigoEntity toAmigoEntity(Amigo amigo) {
