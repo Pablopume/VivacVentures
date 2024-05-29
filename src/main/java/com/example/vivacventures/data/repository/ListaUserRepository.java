@@ -14,6 +14,7 @@ public interface ListaUserRepository extends ListCrudRepository<ListaUserEntity,
     ListaUserEntity findById(int id);
 
     List<ListaUserEntity> findByLista(ListaEntity lista);
+    List<ListaUserEntity> findByUser(UserEntity user);
 
     void deleteById(int id);
 
