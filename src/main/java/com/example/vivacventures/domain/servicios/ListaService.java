@@ -101,10 +101,10 @@ public class ListaService {
 
 
     public List<ListaDTO> getListsByUsernameAndVivacPlaceId(String username, int vivacPlaceId) {
-        List<ListaEntity> listaEntities = listaRepository.findByUserAndVivacPlaceId(username, vivacPlaceId);
+        List<Object[]> listaEntities1 = listaRepository.findIdAndNameByUsernameAndVivacPlaceId(username, vivacPlaceId);
         List<ListaDTO> listas = new ArrayList<>();
-        listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(new Object[]{listaEntity.getId(), listaEntity.getName()})));
-        listas.forEach(lista -> lista.setUsername(username));
+       listaEntities1.forEach(listaEntity -> listas.add(mapperService.toListaDTO(listaEntity)));
+       listas.forEach(lista -> lista.setUsername(username));
         listas.forEach(lista -> lista.setVivacPlaces(new ArrayList<>()));
 
         return listas;
