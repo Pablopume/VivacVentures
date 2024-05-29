@@ -4,6 +4,7 @@ import com.example.vivacventures.data.modelo.*;
 import com.example.vivacventures.data.repository.*;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.Lista;
+import com.example.vivacventures.domain.modelo.ListaUser;
 import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.modelo.dto.ListaDTO;
 import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
@@ -58,10 +59,17 @@ public class ListaService {
 
 
     public List<ListaDTO> getLists(String username) {
-        List<Object[]> listaEntities = listaRepository.findIdAndNameByUsername(username);
+        UserEntity user = userRepository.findByUsername(username);
+        List<ListaUserEntity> idListas = listaUserRepository.findByUser(user);
         List<ListaDTO> listas = new ArrayList<>();
-        listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(listaEntity)));
-        listas.forEach(lista -> lista.setUsername(username));
+        idListas.forEach(listaUserEntity -> {
+            List<Object[]> listaEntities = listaRepository.findIdNameAndUsernameById(listaUserEntity.getLista().getId());
+            Object[] listaEntity = listaEntities.isEmpty() ? null : listaEntities.get(0);
+            ListaDTO lista = mapperService.toListaWithUserDTO(listaEntity);
+            listas.add(lista);
+
+        });
+
         List<FavoritesVivacPlaces> vivacPlaces = new ArrayList<>();
         listas.forEach(lista -> {
             lista.setVivacPlaces(vivacPlaces);
