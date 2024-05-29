@@ -30,6 +30,8 @@ public class ListaService {
         listaRepository.save(listaEntity);
     }
 
+    @Transactional
+
     public void deleteLista(int id) {
         listaRepository.deleteById(id);
     }

@@ -27,10 +27,10 @@ public class ListaEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "lista")
+    @OneToMany(mappedBy = "lista", cascade = CascadeType.REMOVE)
     private List<FavoritoEntity> favoritos;
 
-    @OneToMany(mappedBy = "lista")
+    @OneToMany(mappedBy = "lista", cascade = CascadeType.REMOVE)
     private List<ListaUserEntity> listaUsers;
 
     public ListaEntity(int id, String name, UserEntity user, List<FavoritoEntity> favoritos) {
