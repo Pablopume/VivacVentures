@@ -6,10 +6,15 @@ import com.example.vivacventures.data.modelo.UserEntity;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ListaUserRepository extends ListCrudRepository<ListaUserEntity, Long> {
 
     ListaUserEntity findById(int id);
+
+    List<ListaUserEntity> findByLista(ListaEntity lista);
+
     void deleteById(int id);
 
     void deleteByListaAndUser(ListaEntity lista, UserEntity user);

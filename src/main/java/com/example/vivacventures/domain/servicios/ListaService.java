@@ -47,12 +47,25 @@ public class ListaService {
 
     }
 
+    public void deleteFavoritoFromList(int id, int vivacId) {
+        ListaEntity listaEntity = listaRepository.findById(id);
+        VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.findById(vivacId);
+        if (listaEntity == null)
+            throw new NoExisteException("No existe la lista");
+        else
+            favoritoRepository.deleteByListaAndVivacPlace(listaEntity, vivacPlaceEntity);
+    }
+
 
     public List<ListaDTO> getLists(String username) {
         List<Object[]> listaEntities = listaRepository.findIdAndNameByUsername(username);
         List<ListaDTO> listas = new ArrayList<>();
         listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(listaEntity)));
         listas.forEach(lista -> lista.setUsername(username));
+        List<FavoritesVivacPlaces> vivacPlaces = new ArrayList<>();
+        listas.forEach(lista -> {
+            lista.setVivacPlaces(vivacPlaces);
+        });
 
         return listas;
     }
@@ -89,6 +102,16 @@ public class ListaService {
         listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(new Object[]{listaEntity.getId(), listaEntity.getName()})));
         return listas;
     }
+
+    public List<String> getWhoIsListShareWith(int listaId) {
+        ListaEntity listaEntity = listaRepository.findById(listaId);
+        List<ListaUserEntity> listaEntities = listaUserRepository.findByLista(listaEntity);
+        List<String> usernames = new ArrayList<>();
+        listaEntities.forEach(listaUserEntity -> usernames.add(listaUserEntity.getUser().getUsername()));
+
+        return usernames;
+    }
+
     public void shareList(int id, String username) {
         ListaEntity listaEntity = listaRepository.findById(id);
         UserEntity userEntity = userRepository.findByUsername(username);
