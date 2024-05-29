@@ -4,10 +4,12 @@ import com.example.vivacventures.common.Constantes;
 import com.example.vivacventures.data.modelo.LoginToken;
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.ValorationEntity;
+import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.UserEntityMapper;
 import com.example.vivacventures.data.modelo.mappers.ValorationEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.data.repository.ValorationRepository;
+import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.User;
 import com.example.vivacventures.domain.modelo.Valoration;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
@@ -38,6 +40,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ValorationService {
     private final ValorationRepository valorationRepository;
+    private final VivacPlaceRepository vivacPlaceRepository;
     private final UserRepository userRepository;
     private final MapperService mapperService;
     private final KeyProvider keyProvider;
@@ -69,8 +72,9 @@ public class ValorationService {
 
     public Valoration saveValoration(Valoration valoration){
         UserEntity userEntity = userRepository.findByUsername(valoration.getUsername());
-        ValorationEntity valorationEntity1 = valorationRepository.findByUserEntity(userEntity);
-        if (valorationEntity1!=null){
+        VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.findById(valoration.getVivacPlaceId());
+        boolean exists = valorationRepository.existsByUserEntityAndVivacPlaceEntity(userEntity, vivacPlaceEntity);
+        if (exists){
             throw new AlreadyValorationException("Ya has valorado este lugar");
         }
         if (valoration.getScore()<=0 || valoration.getScore()>5){

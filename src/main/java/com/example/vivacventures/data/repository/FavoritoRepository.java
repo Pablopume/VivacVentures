@@ -32,4 +32,5 @@ public interface FavoritoRepository extends ListCrudRepository<FavoritoEntity, L
 
     FavoritoEntity findById(int id);
 
+    boolean existsByListaAndVivacPlace(ListaEntity lista, VivacPlaceEntity vivacPlace);
 }

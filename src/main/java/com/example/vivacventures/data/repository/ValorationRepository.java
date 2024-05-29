@@ -2,6 +2,7 @@ package com.example.vivacventures.data.repository;
 
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.ValorationEntity;
+import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,7 @@ public interface ValorationRepository extends ListCrudRepository<ValorationEntit
 
     ValorationEntity findById(int id);
     ValorationEntity findByUserEntity(UserEntity userEntity);
+    boolean existsByUserEntityAndVivacPlaceEntity(UserEntity userEntity, VivacPlaceEntity vivacPlaceEntity);
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO valoration (vivac_id, username, score, review, date) VALUES (:vivac_id, :username, :score, :review, :date)", nativeQuery = true)
