@@ -28,6 +28,7 @@ public class ListaService {
         ListaEntity listaEntity = mapperService.toListaEntity(lista);
         lista.setFavoritos(new ArrayList<>());
         listaRepository.save(listaEntity);
+        listaUserRepository.save(new ListaUserEntity(0, listaEntity, userRepository.findByUsername(lista.getUsername())));
     }
 
     @Transactional
