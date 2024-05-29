@@ -43,10 +43,16 @@ public class ListaService {
         FavoritoEntity favoritoEntity = new FavoritoEntity(listaEntity, vivacPlaceEntity);
         if (listaEntity == null)
             throw new NoExisteException("No existe la lista");
-        else
-            favoritoRepository.save(favoritoEntity);
+        else {
+            if (!favoritoRepository.existsByListaAndVivacPlace(listaEntity, vivacPlaceEntity)) {
+                favoritoRepository.save(favoritoEntity);
 
+            } else {
+                throw new NoExisteException("Ya existe el favorito");
+            }
+        }
     }
+
 
     public void deleteFavoritoFromList(int id, int vivacId) {
         ListaEntity listaEntity = listaRepository.findById(id);
@@ -134,6 +140,7 @@ public class ListaService {
             }
         }
     }
+
     @Transactional
     public void deleteSharedList(int id, String username) {
         ListaEntity listaEntity = listaRepository.findById(id);
