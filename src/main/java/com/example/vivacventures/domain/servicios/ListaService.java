@@ -125,10 +125,14 @@ public class ListaService {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (listaEntity == null || userEntity == null)
             throw new NoExisteException("No existe la lista o el usuario");
-        else
-            listaUserRepository.save(new ListaUserEntity(0, listaEntity, userEntity));
+        else {
+            if (!listaUserRepository.existsByListaAndUser(listaEntity, userEntity)) {
+                listaUserRepository.save(new ListaUserEntity(0, listaEntity, userEntity));
+            } else {
+                throw new NoExisteException("Ya existe la lista compartida");
+            }
+        }
     }
-
     @Transactional
     public void deleteSharedList(int id, String username) {
         ListaEntity listaEntity = listaRepository.findById(id);

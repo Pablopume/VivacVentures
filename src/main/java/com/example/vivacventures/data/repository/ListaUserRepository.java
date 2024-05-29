@@ -19,5 +19,5 @@ public interface ListaUserRepository extends ListCrudRepository<ListaUserEntity,
     void deleteById(int id);
 
     void deleteByListaAndUser(ListaEntity lista, UserEntity user);
-
+boolean existsByListaAndUser(ListaEntity lista, UserEntity user);
 }
