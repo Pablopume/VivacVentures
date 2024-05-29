@@ -21,28 +21,24 @@ public class VivacPlaceRest {
         return vivacPlaceService.getVivacPlaces();
     }
 
-    //DAVID CAMBIALO
     @GetMapping("/vivacplacesmy")
     @Secured("ROLE_USER")
     public List<FavoritesVivacPlaces> getVivacPlacesWithFavourites(@RequestHeader("Authorization") String token) {
         return vivacPlaceService.getVivacPlacesWithFavourites(token);
     }
 
-    //DAVID CAMBIALO
     @GetMapping("/vivacplaces/type/{type}")
     @Secured("ROLE_USER")
     public List<FavoritesVivacPlaces> getVivacPlaceByType(@PathVariable("type") String type, @RequestHeader("Authorization") String token) {
         return vivacPlaceService.getVivacPlaceByTypeAndUser(type, token);
     }
 
-    //DAVID CAMBIALO
     @GetMapping("/nearby")
     @Secured("ROLE_USER")
     public List<FavoritesVivacPlaces> getVivacByLatitudeAndLongitude(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, @RequestHeader("Authorization") String token) {
         return vivacPlaceService.getVivacByLatitudeAndLongitudeAndUser(latitude, longitude, token);
     }
 
-    //este no
     @GetMapping("/vivacplaces/user/{username}")
     @Secured("ROLE_USER")
     public List<FavoritesVivacPlaces> getVivacPlaceByUsername(@PathVariable("username") String username) {
