@@ -2,12 +2,14 @@ package com.example.vivacventures.data.modelo;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "lista_user")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class ListaUserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -46,6 +46,12 @@ public class ListaRest {
     }
 
     @Secured("ROLE_USER")
+    @DeleteMapping("/list/favorite/delete")
+    public void deleteFavoriteFromList(@RequestParam("id") int id, @RequestParam("vivacId") int vivacId) {
+        listaService.deleteFavoritoFromList(id, vivacId);
+    }
+
+    @Secured("ROLE_USER")
     @GetMapping("/lists")
     public List<ListaDTO> getLists(@RequestParam("username") String username) {
         return listaService.getLists(username);
@@ -65,8 +71,8 @@ public class ListaRest {
 
     @Secured("ROLE_USER")
     @GetMapping("/list/shared")
-    public List<ListaDTO> getSharedLists(@RequestParam("id") int id) {
-        return listaService.getListsByUserId(id);
+    public List<String> getWhoIsListShareWith(@RequestParam("id") int listaId) {
+        return listaService.getWhoIsListShareWith(listaId);
     }
 
 
