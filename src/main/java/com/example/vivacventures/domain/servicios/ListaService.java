@@ -4,8 +4,6 @@ import com.example.vivacventures.data.modelo.*;
 import com.example.vivacventures.data.repository.*;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.Lista;
-import com.example.vivacventures.domain.modelo.ListaUser;
-import com.example.vivacventures.domain.modelo.VivacPlace;
 import com.example.vivacventures.domain.modelo.dto.ListaDTO;
 import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,9 @@ public class ListaService {
     public void saveLista(Lista lista) {
         ListaEntity listaEntity = mapperService.toListaEntity(lista);
         lista.setFavoritos(new ArrayList<>());
-        listaRepository.save(listaEntity);
+        ListaEntity listacreada = listaRepository.save(listaEntity);
+        UserEntity user = userRepository.findByUsername(lista.getUsername());
+        listaUserRepository.save(new ListaUserEntity(0, listacreada, user));
     }
 
     @Transactional
@@ -40,7 +40,7 @@ public class ListaService {
     public void addFavoritoToLista(int id, int vivacId) {
         ListaEntity listaEntity = listaRepository.findById(id);
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.findById(vivacId);
-        FavoritoEntity favoritoEntity = new FavoritoEntity(listaEntity,vivacPlaceEntity);
+        FavoritoEntity favoritoEntity = new FavoritoEntity(listaEntity, vivacPlaceEntity);
         if (listaEntity == null)
             throw new NoExisteException("No existe la lista");
         else
@@ -82,7 +82,7 @@ public class ListaService {
         List<Object[]> listaEntities = listaRepository.findIdNameAndUsernameById(id);
         Object[] listaEntity = listaEntities.isEmpty() ? null : listaEntities.get(0);
         ListaDTO lista = mapperService.toListaWithUserDTO(listaEntity);
-        List<Integer>  vivacPlaceIds = listaRepository.findVivacPlaceIdsByListaId(lista.getId());
+        List<Integer> vivacPlaceIds = listaRepository.findVivacPlaceIdsByListaId(lista.getId());
         List<FavoritesVivacPlaces> vivacPlaces = new ArrayList<>();
         vivacPlaceIds.forEach(vivacPlaceId -> {
             List<Object[]> vivacPlaceDataList = vivacPlaceRepository.getVivacPlaceWithFavouritesById(vivacPlaceId, lista.getUsername());
