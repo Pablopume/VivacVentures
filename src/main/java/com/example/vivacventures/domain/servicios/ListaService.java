@@ -99,6 +99,7 @@ public class ListaService {
         List<ListaDTO> listas = new ArrayList<>();
         listaEntities.forEach(listaEntity -> listas.add(mapperService.toListaDTO(new Object[]{listaEntity.getId(), listaEntity.getName()})));
         listas.forEach(lista -> lista.setUsername(username));
+        listas.forEach(lista -> lista.setVivacPlaces(new ArrayList<>()));
 
         return listas;
     }
