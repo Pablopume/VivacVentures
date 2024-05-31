@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -38,8 +37,8 @@ public class VivacPlaceService {
     private String userkeystore;
 
 
-
-    public List<FavoritesVivacPlaces> getVivacPlaceByTypeAndUser(String type, String username) {
+    public List<FavoritesVivacPlaces> getVivacPlaceByTypeAndUser(String type, String token) {
+        String username = usernameFromToken(token);
         return vivacPlaceRepository.getVivacByTypeAndUser(type, username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
     }
 
@@ -48,7 +47,8 @@ public class VivacPlaceService {
     }
 
 
-    public List<FavoritesVivacPlaces> getVivacByLatitudeAndLongitudeAndUser(double userLatitude, double userLongitude, String username) {
+    public List<FavoritesVivacPlaces> getVivacByLatitudeAndLongitudeAndUser(double userLatitude, double userLongitude, String token) {
+        String username = usernameFromToken(token);
         return vivacPlaceRepository.findNearbyPlacesAndUser(userLatitude, userLongitude, username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
     }
 
@@ -57,12 +57,26 @@ public class VivacPlaceService {
         return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(mapperService::toVivacPlaceTipoAndNameAndDescriptionAndId).toList();
     }
 
-    public List<FavoritesVivacPlaces> getVivacPlacesWithFavourites(String username) {
+    public List<FavoritesVivacPlaces> getVivacPlacesWithFavourites(String token) {
+        String username = usernameFromToken(token);
         return vivacPlaceRepository.getVivacPlaceWithFavourites(username).stream().map(mapperService::objectToFavoriteVivacPlace).toList();
     }
 
+    public String usernameFromToken(String token) {
+        String cleanedToken = token.replace("Bearer ", "");
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
+                .build().parseClaimsJws(cleanedToken);
+
+        Integer userId = claimsJws.getBody().get("id", Integer.class);
+
+        UserEntity userEntity = userRepository.findById(userId);
+
+        return userEntity.getUsername();
+    }
+
     public VivacPlace saveVivacPlace(VivacPlace vivacPlace) {
-        if ( vivacPlace.getPrice() < 0) {
+        if (vivacPlace.getPrice() < 0) {
             throw new BadPriceException("El precio no puede ser negativo");
         }
         vivacPlace.setVisible(true);
@@ -76,9 +90,7 @@ public class VivacPlaceService {
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(vivacPlace.getId());
         if (vivacPlaceEntity != null) {
             List<ImageEntity> images = imageRepository.getByVivacPlaceEntity(vivacPlaceEntity.getId());
-            for (ImageEntity image : images) {
-                imageRepository.delete(image);
-            }
+            imageRepository.deleteAll(images);
             List<String> imagesToSave = vivacPlace.getImages();
             for (String image : imagesToSave) {
                 ImageEntity imageEntity = new ImageEntity();
@@ -94,32 +106,27 @@ public class VivacPlaceService {
     }
 
     public VivacPlace getVivacPlaceById(int id) {
-        return mapperService.toVivacPlace( vivacPlaceRepository.getVivacPlaceEntitiesById(id));
+        return mapperService.toVivacPlace(vivacPlaceRepository.getVivacPlaceEntitiesById(id));
     }
 
-    public VivacPlace getVivacPlaceByIdAndUsername(int id, String username) {
+    public VivacPlace getVivacPlaceByIdAndUsername(int id, String token) {
+        String username = usernameFromToken(token);
         List<Object[]> vivacPlaceDataList = vivacPlaceRepository.findVivacPlaceByIdAndUsername(id, username);
         Object[] vivacPlaceData = vivacPlaceDataList.isEmpty() ? null : vivacPlaceDataList.get(0);
         List<Object[]> valorationData = vivacPlaceRepository.findValorationsByVivacPlaceId(id);
         List<String> images = vivacPlaceRepository.findImagesByVivacPlaceId(id);
 
+        assert vivacPlaceData != null;
         return mapperService.mapToVivacPlace(vivacPlaceData, valorationData, images);
     }
 
     @Transactional
     public void deleteVivacPlace(int id, String token) {
-        String cleanedToken = token.replace("Bearer ", "");
-        Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
-                .build().parseClaimsJws(cleanedToken);
-
-        Integer userId = claimsJws.getBody().get("id", Integer.class);
-
-        UserEntity userEntity = userRepository.findById(userId);
+        String username = usernameFromToken(token);
 
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(id);
 
-        if (vivacPlaceEntity.getUsername().equals(userEntity.getUsername())) {
+        if (vivacPlaceEntity.getUsername().equals(username)) {
             vivacPlaceRepository.deleteById(id);
         } else {
             throw new NotVerificatedException("No tienes permisos para borrar este lugar");

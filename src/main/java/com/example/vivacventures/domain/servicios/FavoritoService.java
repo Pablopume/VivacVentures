@@ -1,10 +1,12 @@
 package com.example.vivacventures.domain.servicios;
 
 import com.example.vivacventures.data.modelo.FavoritoEntity;
+import com.example.vivacventures.data.modelo.ListaEntity;
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.VivacEntityMapper;
 import com.example.vivacventures.data.repository.FavoritoRepository;
+import com.example.vivacventures.data.repository.ListaRepository;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.common.DomainConstants;
@@ -23,26 +25,27 @@ public class FavoritoService {
     private final VivacPlaceRepository vivacPlaceRepository;
     private final UserRepository userRepository;
     private final MapperService mapperService;
-
+    private final ListaRepository listaRepository;
     private final VivacEntityMapper vivacEntityMapper;
 
 
-    public void saveFavorito(String username, int vivacId) {
-        UserEntity userEntity = userRepository.findByUsername(username);
+    public void saveFavorito(int listaId, int vivacId) {
+
+        ListaEntity listaEntity = listaRepository.findById(listaId);
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(vivacId);
-        if (userEntity == null || vivacPlaceEntity == null)
+        if (listaEntity == null || vivacPlaceEntity == null)
             throw new NoExisteException(DomainConstants.USER_OR_VIVAC_PLACE_NOT_FOUND);
         else
-            favoritoRepository.save(new FavoritoEntity(userEntity, vivacPlaceEntity));
+            favoritoRepository.save(new FavoritoEntity(listaEntity, vivacPlaceEntity));
     }
 
-    public void deleteFavorito(String username, int vivacId) {
-        UserEntity userEntity = userRepository.findByUsername(username);
+    public void deleteFavorito(int id, int vivacId) {
+        ListaEntity listaEntity = listaRepository.findById(id);
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(vivacId);
-        if (userEntity == null || vivacPlaceEntity == null)
+        if (listaEntity == null || vivacPlaceEntity == null)
             throw new NoExisteException(DomainConstants.USER_OR_VIVAC_PLACE_NOT_FOUND);
         else
-            favoritoRepository.deleteByUserAndVivacPlace(userEntity, vivacPlaceEntity);
+            favoritoRepository.deleteByListaAndVivacPlace(listaEntity, vivacPlaceEntity);
     }
 
     public List<FavoritesVivacPlaces> getFavoritos(String username) {

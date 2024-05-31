@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface AmigoRepository extends ListCrudRepository<AmigoEntity, Long> {
 
+    boolean existsByRequesterAndRequested(UserEntity requester, UserEntity requested);
     AmigoEntity findById(int id);
 
     List<AmigoEntity> findByRequester(UserEntity requestedUser);
@@ -21,6 +22,10 @@ public interface AmigoRepository extends ListCrudRepository<AmigoEntity, Long> {
 
     @Query("SELECT a FROM AmigoEntity a WHERE (a.requested = :user) AND a.status = false")
     List<AmigoEntity> findPendingRequestsByUser(@Param("user") UserEntity user);
+
+    AmigoEntity findByRequesterAndRequested(UserEntity requester, UserEntity requested);
+
+
 
 
 }

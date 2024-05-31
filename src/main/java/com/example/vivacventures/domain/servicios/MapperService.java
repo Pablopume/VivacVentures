@@ -5,6 +5,7 @@ import com.example.vivacventures.data.modelo.mappers.ValorationEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.*;
+import com.example.vivacventures.domain.modelo.dto.ListaDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,32 +26,39 @@ public class MapperService {
         List<Valoration> valorations = vivacPlace.getValorations().stream().map(valorationEntityMapper::toValoration).toList();
         List<String> images = new ArrayList<>();
         vivacPlace.getImages().forEach(image -> images.add(image.getUrl()));
-        return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), valorations, vivacPlace.getType(), vivacPlace.getPrice(), images,vivacPlace.isVisible());
+        return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), valorations, vivacPlace.getType(), vivacPlace.getPrice(), images, vivacPlace.isVisible());
     }
 
     public VivacPlace toVivacPlaceTipoAndNameAndDescriptionAndId(VivacPlaceEntity vivacPlace) {
-        return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), new ArrayList<>(), vivacPlace.getType(), vivacPlace.getPrice(), new ArrayList<>(),vivacPlace.isVisible());
+        return new VivacPlace(vivacPlace.getId(), vivacPlace.getName(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), new ArrayList<>(), vivacPlace.getType(), vivacPlace.getPrice(), new ArrayList<>(), vivacPlace.isVisible());
     }
 
     public ValorationEntity toValorationEntity(Valoration valoration) {
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(valoration.getVivacPlaceId());
         UserEntity userEntity = userRepository.findByUsername(valoration.getUsername());
-        return new ValorationEntity(valoration.getId(), valoration.getScore(), valoration.getReview(), vivacPlaceEntity, userEntity,valoration.getDate());
+        return new ValorationEntity(valoration.getId(), valoration.getScore(), valoration.getReview(), vivacPlaceEntity, userEntity, valoration.getDate());
     }
 
     public Valoration toValoration(ValorationEntity valorationEntity) {
 
-        return new Valoration(valorationEntity.getId(), valorationEntity.getUserEntity().getUsername(), valorationEntity.getVivacPlaceEntity().getId(), valorationEntity.getScore(), valorationEntity.getReview(),valorationEntity.getDate());
+        return new Valoration(valorationEntity.getId(), valorationEntity.getUserEntity().getUsername(), valorationEntity.getVivacPlaceEntity().getId(), valorationEntity.getScore(), valorationEntity.getReview(), valorationEntity.getDate());
     }
 
     public Report toReport(ReporteEntity reportEntity) {
         return new Report(reportEntity.getId(), reportEntity.getUsername(), reportEntity.getVivacPlaceEntity().getId(), reportEntity.getDescription());
     }
 
+
+    public ListaEntity toListaEntity(Lista lista) {
+        UserEntity userEntity = userRepository.findByUsername(lista.getUsername());
+        return new ListaEntity(lista.getId(), lista.getName(), userEntity, lista.getFavoritos());
+    }
+
     public ReporteEntity toReportEntity(Report report) {
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(report.getVivacPlaceId());
         return new ReporteEntity(report.getId(), report.getUsername(), vivacPlaceEntity, report.getDescription());
     }
+
     public VivacPlace mapToVivacPlace(Object[] vivacPlaceData, List<Object[]> valorationData, List<String> images) {
         VivacPlace vivacPlace = new VivacPlace();
         vivacPlace.setId((Integer) vivacPlaceData[0]);
@@ -98,6 +106,25 @@ public class MapperService {
         return vivacPlaceEntity;
 
     }
+
+    public ListaDTO toListaDTO(Object[] listaEntity) {
+        int id = (int) listaEntity[0];
+        String name = (String) listaEntity[1];
+        return new ListaDTO(id, name);
+    }
+
+    public ListaDTO toListaWithUserDTO(Object[] listaEntity) {
+        int id = (int) listaEntity[0];
+        String name = (String) listaEntity[1];
+        String username = (String) listaEntity[2];
+        return new ListaDTO(id, name, username);
+    }
+
+    public int objectToInt(Object object){
+        return (int) object;
+    }
+
+
 
     public AmigoEntity toAmigoEntity(Amigo amigo) {
         UserEntity requester = userRepository.findByUsername(amigo.getRequester());

@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class VivacPlaceServiceTest {
+class VivacPlaceServiceTest {
 
     @Mock
     private VivacPlaceRepository vivacPlaceRepository;

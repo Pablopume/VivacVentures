@@ -5,6 +5,7 @@ import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.repository.AmigoRepository;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.domain.modelo.Amigo;
+import com.example.vivacventures.domain.modelo.exceptions.YaExisteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,26 @@ public class AmigoService {
     public void mandarPeticionAmistad(Amigo amigo) {
         amigo.setStatus(false);
         AmigoEntity amigoEntity = mapperService.toAmigoEntity(amigo);
-        amigoRepository.save(amigoEntity);
+        if (amigoRepository.existsByRequesterAndRequested(new UserEntity(amigoEntity.getRequester().getId()), new UserEntity(amigoEntity.getRequested().getId())) ) {
+           throw new YaExisteException("Ya existe una petición de amistad o una amistad entre estos dos usuarios");
+       }
+        else if (amigoRepository.existsByRequesterAndRequested(new UserEntity(amigoEntity.getRequested().getId()), new UserEntity(amigoEntity.getRequester().getId())) ) {
+         AmigoEntity amigoEntity1=   amigoRepository.findByRequesterAndRequested(new UserEntity(amigoEntity.getRequested().getId()), new UserEntity(amigoEntity.getRequester().getId()));
+        if (amigoEntity1.isStatus()) {
+            throw new YaExisteException("Ya existe una amistad entre estos dos usuarios");
+        }
+        else {
+            amigoEntity1.setStatus(true);
+            amigoRepository.save(amigoEntity1);
+        }
+        }
+        else {
+            amigoRepository.save(amigoEntity);
+        }
+
+
+
+
     }
 
     public void aceptarPeticionAmistad(Amigo amigo) {

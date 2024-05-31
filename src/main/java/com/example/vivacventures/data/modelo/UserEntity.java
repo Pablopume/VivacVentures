@@ -43,4 +43,13 @@ public class UserEntity {
     @OneToMany(mappedBy = "requested")
     private List<AmigoEntity> amigos2;
 
+    @OneToMany(mappedBy = "user")
+    private List<ListaEntity> listasCreadas;
+
+    @OneToMany(mappedBy = "user")
+    private List<ListaUserEntity> listasAcceso;
+
+    public UserEntity(int id) {
+        this.id = id;
+    }
 }

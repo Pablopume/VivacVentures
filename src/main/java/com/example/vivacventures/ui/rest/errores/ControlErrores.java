@@ -37,6 +37,11 @@ public class ControlErrores extends ResponseEntityExceptionHandler implements Ac
     }
 
 
+    @ExceptionHandler(AlreadyValorationException.class)
+    public ResponseEntity<ApiError> handleAlreadyValorationException(AlreadyValorationException e) {
+        ApiError apiError = new ApiError(e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
+    }
     @ExceptionHandler(BadPasswordException.class)
     public ResponseEntity<ApiError> handleBadPasswordException(BadPasswordException e) {
         ApiError apiError = new ApiError(e.getMessage(), LocalDateTime.now());
