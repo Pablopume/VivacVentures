@@ -2,6 +2,7 @@ package com.example.vivacventures.util;
 
 import com.example.vivacventures.common.Constantes;
 import com.example.vivacventures.domain.common.Config;
+import com.example.vivacventures.security.KeyProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -20,18 +21,20 @@ import java.security.cert.X509Certificate;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
 
+    private final KeyProvider keyProvider;
+
     @Value(ConstantesUtil.APPLICATION_PASSWORD)
     private String password;
 
     @Value(ConstantesUtil.APPLICATION_KEYSTORENAME)
     private String keystorename;
 
-    @Value(ConstantesUtil.APPLICATION_KEYSTORE)
-    private String keystore;
+    @Value(Constantes.APPLICATION_SECURITY_KEYSTORE_USERKEYSTORE)
+    private String userkeystore;
 
     public boolean validate(String token) {
         Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(getPublicKey())
+                .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPublic())
                 .build()
                 .parseClaimsJws(token);
 
@@ -42,35 +45,15 @@ public class JwtTokenUtil {
 
     public String getUsername(String token) {
         Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(getPublicKey())
+                .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPublic())
                 .build()
                 .parseClaimsJws(token);
         return claimsJws.getBody().getSubject();
     }
 
-
-    private PublicKey getPublicKey() {
-        try {
-
-            char[] keystorePassword = password.toCharArray();
-            KeyStore ks = KeyStore.getInstance(ConstantesUtil.PKCS_12);
-            FileInputStream fis = new FileInputStream(keystore);
-            ks.load(fis, keystorePassword);
-            fis.close();
-            X509Certificate userCertificate = (X509Certificate) ks.getCertificate(keystorename);
-            return userCertificate.getPublicKey();
-
-
-        } catch (Exception ex) {
-
-            return null;
-        }
-    }
-
-
     public String getRole(String token) {
         Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(getPublicKey())
+                .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPublic())
                 .build()
                 .parseClaimsJws(token);
         return claimsJws.getBody().get(ConstantesUtil.ROL, String.class);
