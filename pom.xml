@@ -14,7 +14,7 @@
     <name>VivacVentures</name>
     <description>VivacVentures</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
     </properties>
     <dependencies>
 
@@ -96,22 +96,8 @@
         </dependency>
 
 
-        <!-- Jersey (JAX-RS implementation) for returning status-->
 
-            <dependency>
-                <groupId>org.glassfish.jersey.containers</groupId>
-                <artifactId>jersey-container-servlet</artifactId>
-                <version>3.0.2</version>
-            </dependency>
-
-
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>10.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-<!--        Mandar mail-->
+        <!--        Mandar mail-->
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
@@ -122,26 +108,28 @@
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>jakarta.mail</groupId>-->
-<!--            <artifactId>jakarta.mail-api</artifactId>-->
-<!--            <version>2.1.2</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>jakarta.platform</groupId>-->
-<!--            <artifactId>jakarta.jakartaee-web-api</artifactId>-->
-<!--            <version>10.0.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>jakarta.mail</groupId>-->
+        <!--            <artifactId>jakarta.mail-api</artifactId>-->
+        <!--            <version>2.1.2</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>jakarta.platform</groupId>-->
+        <!--            <artifactId>jakarta.jakartaee-web-api</artifactId>-->
+        <!--            <version>10.0.0</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
 
 
-<!--        /////-->
+        <!--        /////-->
 
 
     </dependencies>
 
+
     <build>
+        <finalName>spring_vivacventures_docker</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

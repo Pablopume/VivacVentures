@@ -1,11 +1,13 @@
 package com.example.vivacventures.ui.rest;
 
+import com.example.vivacventures.data.modelo.LoginToken;
 import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.servicios.UserService;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -33,14 +35,14 @@ public class CredentialsRest {
     }
 
     @PutMapping("/auth/forgotPassword")
-    public Response forgotPassword(@RequestParam String email) {
+    public ResponseEntity<Void> forgotPassword(@RequestParam String email) {
         userService.forgotPassword(email);
-        return Response.status(Response.Status.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/auth/resetPassword")
-    public Response resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String temporalPassword) {
-        userService.changePassword(email, newPassword, temporalPassword);
-        return Response.status(Response.Status.OK).build();
+    public ResponseEntity<Void> resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String temporalPassword) {
+        userService.changePassword(email, newPassword,temporalPassword);
+        return ResponseEntity.ok().build();
     }
 }

@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.*;
 import java.security.cert.X509Certificate;
 
@@ -28,7 +30,8 @@ public class KeyProvider {
 
             char[] keystorePassword = password.toCharArray();
             KeyStore ks = KeyStore.getInstance("PKCS12");
-            FileInputStream fis = new FileInputStream(keystore);
+            InputStream fis = new ClassPathResource(keystore).getInputStream();
+
             ks.load(fis, keystorePassword);
             fis.close();
 

@@ -1,5 +1,5 @@
 ###login admin
-GET http://localhost:8764/auth/login?username=pablo&password=pume
+GET http://localhost:8764/vivacventures/auth/login?username=pablo&password=pume
 Accept: application/json
 Content-Type: application/json
 
