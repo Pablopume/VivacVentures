@@ -33,7 +33,7 @@ public class VivacPlaceEntity {
     private LocalDate date;
     @Column(name = "capacity")
     private int capacity;
-    @OneToMany(mappedBy = "vivacPlaceEntity")
+    @OneToMany(mappedBy = "vivacPlaceEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<ValorationEntity> valorations;
     @Column(name = "price")
     private Double price;
