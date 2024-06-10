@@ -2,6 +2,7 @@ package com.example.vivacventures.domain.servicios;
 
 import com.example.vivacventures.common.Constantes;
 import com.example.vivacventures.data.modelo.LoginToken;
+import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.mappers.UserEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
 import com.example.vivacventures.domain.modelo.User;
@@ -15,6 +16,7 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -101,13 +103,15 @@ public class TokenService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         if (authentication.isAuthenticated()) {
+            UserEntity userEntity = userRepository.findByUsername(user);
+            if (!userEntity.isVerified()) {
+                throw new NotVerificatedException("Usuario no verificado, diríjase a su correo para verificarlo");
+            }
             String accessToken = generateToken(user);
             String refreshToken = generateRefreshToken(user);
             return new LoginToken(accessToken, refreshToken);
-        }
-
-        else {
-            throw new NotVerificatedException("Usuario o contraseña incorrectos");
+        } else {
+            throw new BadCredentialsException("Usuario o contraseña incorrectos");
         }
     }
 }

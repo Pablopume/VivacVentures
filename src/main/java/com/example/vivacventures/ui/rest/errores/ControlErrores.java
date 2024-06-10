@@ -74,7 +74,7 @@ public class ControlErrores extends ResponseEntityExceptionHandler implements Ac
     @ExceptionHandler(NotVerificatedException.class)
     public ResponseEntity<ApiError> handleExceptionNotVerificated(NotVerificatedException e) {
         ApiError apiError = new ApiError(e.getMessage(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
                 .body(apiError);
     }
 
