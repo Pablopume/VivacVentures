@@ -175,5 +175,11 @@ public class MapperService {
         return favoritesVivacPlaces;
     }
 
+    public VivacPlaceWeb toVivacPlaceWeb(VivacPlaceEntity vivacPlaceEntity) {
+        double mediaValorations = 0;
+        List<String> images = new ArrayList<>();
+        return new VivacPlaceWeb(vivacPlaceEntity.getId(), vivacPlaceEntity.getName(), vivacPlaceEntity.getType(), vivacPlaceEntity.getUsername(), vivacPlaceEntity.isVisible(), mediaValorations, images);
+    }
+
 
 }

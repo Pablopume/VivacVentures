@@ -3,17 +3,25 @@ import com.example.vivacventures.common.Constantes;
 import com.example.vivacventures.data.modelo.UserEntity;
 import com.example.vivacventures.data.modelo.mappers.UserEntityMapper;
 import com.example.vivacventures.data.repository.UserRepository;
+import com.example.vivacventures.domain.modelo.UserWeb;
+import com.example.vivacventures.domain.modelo.dto.AdminRegisterDTO;
 import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
+import com.example.vivacventures.domain.modelo.dto.UserUpdateDTO;
 import com.example.vivacventures.domain.modelo.exceptions.*;
 import com.example.vivacventures.util.Utils;
+import com.example.vivacventures.web.domain.model.UserSummaryDTO;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 @Service
 @RequiredArgsConstructor
@@ -24,6 +32,8 @@ public class UserService {
     private final MandarMail mandarMail;
     @Value(Constantes.APPLICATION_SECURITY_JWT_ACCESS_TOKEN_EXPIRATION)
     private int accessExpiration;
+    @Value("${admin.verification.code}")
+    private String adminVerificationCode;
 
     public UserAmigoDTO getUserAmigo(String username) {
         return userRepository.getAllUsersWithVivacPlaceCount(username).stream()
@@ -58,6 +68,11 @@ public class UserService {
             user.setTemporalPassword(passwordEncoder.encode(randomString));
             userRepository.save(user);
     }
+@Transactional
+    public void delete(int id) {
+userRepository.deleteById(id);
+
+    }
 
     public boolean register(UserRegisterDTO userRegisterDTO) {
         if (userRegisterDTO.getEmail() == null || !userRegisterDTO.getEmail().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
@@ -80,7 +95,7 @@ public class UserService {
                     mandarMail.generateAndSendEmail(userEntity.getEmail(),
                             "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
                 } catch (MessagingException e) {
-                    throw new RuntimeException(e);
+                   throw new RuntimeException(e);
                 }
                 userRepository.save(userEntity);
                 return true;
@@ -89,6 +104,46 @@ public class UserService {
             }
         } else {
             throw new YaExisteException("Usuario ya existente");
+        }
+    }
+
+    public boolean register(AdminRegisterDTO adminRegisterDTO) {
+        if (adminRegisterDTO.getEmail() == null || !adminRegisterDTO.getEmail().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+            throw new MailIncorrectoException("Email incorrecto");
+        }
+
+        if (!adminVerificationCode.equals(adminRegisterDTO.getCode())) {
+            throw new CodigoIncorrectoException("Código de verificación incorrecto");
+        }
+
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO(adminRegisterDTO.getUsername(), adminRegisterDTO.getPassword(), adminRegisterDTO.getEmail());
+
+        UserEntity userEntity = userEntityMapper.toUserEntity(userRegisterDTO);
+        UserEntity usuarioRepetido = userRepository.findByUsername(adminRegisterDTO.getUsername());
+        UserEntity emailRepetido = userRepository.findByEmail(adminRegisterDTO.getEmail());
+
+        if (usuarioRepetido == null ) {
+            if (emailRepetido == null) {
+                String randomString = Utils.randomBytes();
+                userEntity.setRol("ADMIN");
+                userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+                userEntity.setRandomStringVerified(randomString);
+                userEntity.setVerificationExpirationDate(LocalDateTime.now());
+                String url = ServicioConstantes.urlVerify + userEntity.getRandomStringVerified();
+
+                try {
+                    mandarMail.generateAndSendEmail(userEntity.getEmail(),
+                            "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                }
+                userRepository.save(userEntity);
+                return true;
+            } else {
+                throw new YaExisteException("Email ya existente");
+            }
+        } else {
+            throw new YaExisteException("Nombre ya existente");
         }
     }
 
@@ -127,6 +182,32 @@ public class UserService {
         }
 
         return "Email reenviado. Revise su correo";
+    }
+
+    public List<UserWeb> getAllUsers() {
+        List<Object[]> results = userRepository.findAllUsers();
+        List<UserWeb> usersWeb = new ArrayList<>();
+        for (Object[] result : results) {
+            Integer id = (Integer) result[0];
+            String username = (String) result[1];
+            String email = (String) result[2];
+            String rol = (String) result[3];
+            boolean verified = (boolean) result[4];
+
+            UserWeb userWeb = new UserWeb(id, username, email, rol, verified);
+            usersWeb.add(userWeb);
+        }
+        return usersWeb;
+    }
+
+    public void updateUser(int userId, UserUpdateDTO request) {
+        UserEntity user = userRepository.findById(userId);
+
+        if (user == null) {
+            throw new NoExisteException("Usuario no encontrado");
+        }
+
+        userRepository.updateUserDetails(userId, request.getUsername(), request.isVerified(), request.getRol());
     }
 
 

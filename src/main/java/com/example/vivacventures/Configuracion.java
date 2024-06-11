@@ -5,6 +5,7 @@ import com.example.vivacventures.domain.servicios.MandarMail;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 @Configuration
 public class Configuracion {
+    @Value("${admin.verification.code}")
+    private String adminVerificationCode;
+
+    @Bean
+    public String adminVerificationCode() {
+        return adminVerificationCode;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

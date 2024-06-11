@@ -124,6 +124,13 @@ public class ControlErrores extends ResponseEntityExceptionHandler implements Ac
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiError(e.getMessage(), LocalDateTime.now()));
     }
+    @ExceptionHandler(CodigoIncorrectoException.class)
+    public ResponseEntity<ApiError> handleCodigoIncorrectoException(CodigoIncorrectoException e) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                .body(new ApiError(e.getMessage(), LocalDateTime.now()));
+    }
+
+
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
