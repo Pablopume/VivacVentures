@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,13 +68,10 @@ public class UserService {
             user.setTemporalPassword(passwordEncoder.encode(randomString));
             userRepository.save(user);
     }
+@Transactional
+    public void delete(int id) {
+userRepository.deleteById(id);
 
-    public boolean delete(int id) {
-        if (userRepository.deleteById(id)) {
-            return true;
-        } else {
-            throw new NoExisteException("Usuario no encontrado");
-        }
     }
 
     public boolean register(UserRegisterDTO userRegisterDTO) {
