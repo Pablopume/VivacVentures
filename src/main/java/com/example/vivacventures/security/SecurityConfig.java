@@ -51,6 +51,7 @@ private final JwtTokenFilter jwtTokenFilter;
 //                                .requestMatchers("/getusers").hasRole("ADMIN")
                                 .requestMatchers("/web/*").permitAll()
                                 .requestMatchers("/web/login*").permitAll()
+                                .requestMatchers("/images/**").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
 

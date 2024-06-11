@@ -1,6 +1,7 @@
 package com.example.vivacventures.ui.rest;
 
 import com.example.vivacventures.data.modelo.LoginToken;
+import com.example.vivacventures.domain.modelo.dto.AdminRegisterDTO;
 import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.servicios.UserService;
