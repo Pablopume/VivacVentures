@@ -27,6 +27,11 @@ public class CredentialsRest {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/auth/delete")
+    public boolean delete(@RequestParam int id) {
+      return userService.delete(id);
+    }
+
     @GetMapping("/auth/verified")
     public String verified(@RequestParam String verifiedString) {
         return userService.autenticarse(verifiedString);

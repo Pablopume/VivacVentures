@@ -68,6 +68,14 @@ public class UserService {
             userRepository.save(user);
     }
 
+    public boolean delete(int id) {
+        if (userRepository.deleteById(id)) {
+            return true;
+        } else {
+            throw new NoExisteException("Usuario no encontrado");
+        }
+    }
+
     public boolean register(UserRegisterDTO userRegisterDTO) {
         if (userRegisterDTO.getEmail() == null || !userRegisterDTO.getEmail().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
             throw new MailIncorrectoException("Email incorrecto");
@@ -89,7 +97,7 @@ public class UserService {
                     mandarMail.generateAndSendEmail(userEntity.getEmail(),
                             "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
                 } catch (MessagingException e) {
-                    throw new RuntimeException(e);
+                   throw new RuntimeException(e);
                 }
                 userRepository.save(userEntity);
                 return true;
