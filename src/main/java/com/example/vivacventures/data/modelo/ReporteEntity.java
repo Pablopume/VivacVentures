@@ -26,5 +26,4 @@ public class ReporteEntity {
     private String description;
 
 
-
 }
