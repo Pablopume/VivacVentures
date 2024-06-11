@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ValorationRepository extends ListCrudRepository<ValorationEntity, Long> {
@@ -18,7 +19,7 @@ public interface ValorationRepository extends ListCrudRepository<ValorationEntit
     void deleteById(int id);
 
     ValorationEntity findById(int id);
-    ValorationEntity findByUserEntity(UserEntity userEntity);
+    List<ValorationEntity> findByVivacPlaceEntity(VivacPlaceEntity vivacPlaceEntity);
     boolean existsByUserEntityAndVivacPlaceEntity(UserEntity userEntity, VivacPlaceEntity vivacPlaceEntity);
     @Modifying
     @Transactional

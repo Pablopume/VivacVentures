@@ -3,13 +3,16 @@ package com.example.vivacventures.domain.servicios;
 import com.example.vivacventures.common.Constantes;
 import com.example.vivacventures.data.modelo.ImageEntity;
 import com.example.vivacventures.data.modelo.UserEntity;
+import com.example.vivacventures.data.modelo.ValorationEntity;
 import com.example.vivacventures.data.modelo.VivacPlaceEntity;
 import com.example.vivacventures.data.modelo.mappers.VivacEntityMapper;
 import com.example.vivacventures.data.repository.ImageRepository;
 import com.example.vivacventures.data.repository.UserRepository;
+import com.example.vivacventures.data.repository.ValorationRepository;
 import com.example.vivacventures.data.repository.VivacPlaceRepository;
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
+import com.example.vivacventures.domain.modelo.VivacPlaceWeb;
 import com.example.vivacventures.domain.modelo.exceptions.BadPriceException;
 import com.example.vivacventures.domain.modelo.exceptions.NoExisteException;
 import com.example.vivacventures.domain.modelo.exceptions.NotVerificatedException;
@@ -23,12 +26,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
 public class VivacPlaceService {
     private final VivacPlaceRepository vivacPlaceRepository;
     private final ImageRepository imageRepository;
+    private final ValorationRepository valorationRepository;
     private final VivacEntityMapper vivacEntityMapper;
     private final MapperService mapperService;
     private final KeyProvider keyProvider;
@@ -75,6 +82,16 @@ public class VivacPlaceService {
         return userEntity.getUsername();
     }
 
+    public String rolFromToken(String token) {
+        String cleanedToken = token.replace("Bearer ", "");
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(keyProvider.obtenerKeyPairUsuario(userkeystore).getPrivate())
+                .build().parseClaimsJws(cleanedToken);
+
+        return claimsJws.getBody().get("rol", String.class);
+    }
+
+
     public VivacPlace saveVivacPlace(VivacPlace vivacPlace) {
         if (vivacPlace.getPrice() < 0) {
             throw new BadPriceException("El precio no puede ser negativo");
@@ -89,16 +106,35 @@ public class VivacPlaceService {
     public boolean updateVivacPlace(VivacPlace vivacPlace) {
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(vivacPlace.getId());
         if (vivacPlaceEntity != null) {
-            List<ImageEntity> images = imageRepository.getByVivacPlaceEntity(vivacPlaceEntity.getId());
-            imageRepository.deleteAll(images);
+            List<ImageEntity> existingImages = imageRepository.getByVivacPlaceEntity(vivacPlaceEntity.getId());
+            List<String> existingImageUrls = existingImages.stream().map(ImageEntity::getUrl).collect(toList());
             List<String> imagesToSave = vivacPlace.getImages();
-            for (String image : imagesToSave) {
-                ImageEntity imageEntity = new ImageEntity();
-                imageEntity.setUrl(image);
-                imageEntity.setVivacPlaceEntity(vivacPlaceEntity);
-                imageRepository.save(imageEntity);
+
+            boolean imagesAreEqual = existingImageUrls.containsAll(imagesToSave) && imagesToSave.containsAll(existingImageUrls);
+
+            if (!imagesAreEqual) {
+                imageRepository.deleteAll(existingImages);
+
+                for (String image : imagesToSave) {
+                    ImageEntity imageEntity = new ImageEntity();
+                    imageEntity.setUrl(image);
+                    imageEntity.setVivacPlaceEntity(vivacPlaceEntity);
+                    imageRepository.save(imageEntity);
+                }
             }
-            vivacPlaceRepository.updateVivacPlaceEntitie(vivacPlace.getName(), vivacPlace.getType(), vivacPlace.getDescription(), vivacPlace.getLatitude(), vivacPlace.getLongitude(), vivacPlace.getUsername(), vivacPlace.getCapacity(), vivacPlace.getDate(), vivacPlace.getPrice(), vivacPlace.getId());
+
+            vivacPlaceRepository.updateVivacPlaceEntitie(
+                    vivacPlace.getName(),
+                    vivacPlace.getType(),
+                    vivacPlace.getDescription(),
+                    vivacPlace.getLatitude(),
+                    vivacPlace.getLongitude(),
+                    vivacPlace.getUsername(),
+                    vivacPlace.getCapacity(),
+                    vivacPlace.getDate(),
+                    vivacPlace.getPrice(),
+                    vivacPlace.getId()
+            );
             return true;
         } else {
             throw new NoExisteException("No se ha podido actualizar el lugar");
@@ -123,16 +159,51 @@ public class VivacPlaceService {
     @Transactional
     public void deleteVivacPlace(int id, String token) {
         String username = usernameFromToken(token);
+        String rol = rolFromToken(token);
 
         VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(id);
 
-        if (vivacPlaceEntity.getUsername().equals(username)) {
+        if (vivacPlaceEntity.getUsername().equals(username) || rol.equals("ADMIN")) {
             vivacPlaceRepository.deleteById(id);
         } else {
             throw new NotVerificatedException("No tienes permisos para borrar este lugar");
 
         }
     }
+
+
+    public List<VivacPlaceWeb> getVivacPlacesWeb() {
+        return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(vivacPlaceEntity -> {
+                    VivacPlaceWeb vivacPlaceWeb = mapperService.toVivacPlaceWeb(vivacPlaceEntity);
+
+                    // Obtener las valoraciones para este lugar
+                    List<ValorationEntity> valorations = valorationRepository.findByVivacPlaceEntity(vivacPlaceEntity);
+                    if (!valorations.isEmpty()) {
+                        // Calcular la media de las valoraciones
+                        double mediaValorations = valorations.stream()
+                                .mapToDouble(ValorationEntity::getScore)
+                                .average()
+                                .orElse(0);
+                        vivacPlaceWeb.setMediaValorations(mediaValorations);
+                    }
+
+                    // Obtener las URLs de las imágenes para este lugar
+                    List<ImageEntity> images = imageRepository.getByVivacPlaceEntity(vivacPlaceEntity.getId());
+                    if (!images.isEmpty()) {
+                        // Obtener las URLs de las imágenes y agregarlas a la lista
+                        List<String> imageUrls = images.stream()
+                                .map(ImageEntity::getUrl)
+                                .collect(toList());
+                        vivacPlaceWeb.setImages(imageUrls);
+                    }
+
+                    return vivacPlaceWeb;
+                }
+        ).collect(toList());
+
+    }
+
+
 
 }
 

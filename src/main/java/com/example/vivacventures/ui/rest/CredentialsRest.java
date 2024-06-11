@@ -1,5 +1,6 @@
 package com.example.vivacventures.ui.rest;
 
+import com.example.vivacventures.data.modelo.LoginToken;
 import com.example.vivacventures.domain.modelo.dto.UserAmigoDTO;
 import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.servicios.UserService;
@@ -16,6 +17,12 @@ public class CredentialsRest {
     @PostMapping("/auth/register")
     public ResponseEntity<Void>  register(@RequestBody UserRegisterDTO u) {
         userService.register(u);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/auth/registeradmin")
+    public ResponseEntity<?> registerAdmin(@RequestBody AdminRegisterDTO adminRegisterDTO) {
+        userService.register(adminRegisterDTO);
         return ResponseEntity.ok().build();
     }
 

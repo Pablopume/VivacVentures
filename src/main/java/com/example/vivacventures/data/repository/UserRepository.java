@@ -39,4 +39,16 @@ public interface UserRepository extends ListCrudRepository<UserEntity, Long> {
 
     @Query(value = "SELECT u.username, COUNT(vp.id) as num_vivac_places FROM user u LEFT JOIN vivac_place vp ON u.username = vp.username WHERE u.username =:username GROUP BY u.username", nativeQuery = true)
     List<Object[]> getAllUsersWithVivacPlaceCount(String username);
+
+//    @Query("SELECT u.id, u.username, u.email, u.rol " +
+//            "FROM UserEntity u")
+//    List<Object[]> findAllUsers();
+
+    @Query("SELECT u.id, u.username, u.email, u.rol, u.verified FROM UserEntity u")
+    List<Object[]> findAllUsers();
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE UserEntity u SET u.username = :username, u.verified = :verified, u.rol = :rol WHERE u.id = :userId")
+    void updateUserDetails(int userId, String username, boolean verified, String rol);
 }

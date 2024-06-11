@@ -2,6 +2,7 @@ package com.example.vivacventures.ui.rest;
 
 import com.example.vivacventures.domain.modelo.FavoritesVivacPlaces;
 import com.example.vivacventures.domain.modelo.VivacPlace;
+import com.example.vivacventures.domain.modelo.VivacPlaceWeb;
 import com.example.vivacventures.domain.servicios.VivacPlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
@@ -71,8 +72,14 @@ public class VivacPlaceRest {
     }
 
     @DeleteMapping("/delete/{id}")
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_USER" , "ROLE_ADMIN"})
     public void deleteVivacPlace(@PathVariable int id, @RequestHeader("Authorization") String token) {
         vivacPlaceService.deleteVivacPlace(id, token);
+    }
+
+    @GetMapping("/getvivacplacesweb")
+    @Secured("ROLE_ADMIN")
+    public List<VivacPlaceWeb> getVivacPlacesWeb() {
+        return vivacPlaceService.getVivacPlacesWeb();
     }
 }

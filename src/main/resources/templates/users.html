@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="icon" href="/static/images/logo.jpeg" type="image/jpeg">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <style>
+        .return-btn {
+            margin-top: 20px;
+            background-color: #FFA500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .table-container {
+            border: 1px solid #0000FF; /* Blue border for the table */
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        table th, table td {
+            border-right: 1px solid #0000FF; /* Blue lines between columns */
+        }
+        table th:last-child, table td:last-child {
+            border-right: none; /* Remove the border from the last column */
+        }
+        .btn-spacing {
+            margin-right: 15px;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="userList" class="container">
+        <h1>Users</h1>
+
+        <div class="table-container">
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Verified</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <th><input type="text" class="form-control" id="filterId" placeholder="Filter by Id"></th>
+                    <th><input type="text" class="form-control" id="filterUsername" placeholder="Filter by Username"></th>
+                    <th><input type="text" class="form-control" id="filterEmail" placeholder="Filter by Email"></th>
+                    <th>
+                        <select class="form-control" id="filterRol">
+                            <option value="">All</option>
+                            <option value="USER">USER</option>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
+                    </th>
+                    <th>
+                        <select class="form-control" id="filterVerified">
+                            <option value="">All</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="userTableBody">
+            <!-- Los usuarios se añadirán aquí con JavaScript -->
+            </tbody>
+          <!--  <tbody>
+                <tr th:each="userWeb : ${users}">
+                    <td th:text="${userWeb.id}"></td>
+                    <td th:text="${userWeb.username}"></td>
+                    <td th:text="${userWeb.email}"></td>
+                    <td th:text="${userWeb.rol}"></td>
+                    <td th:text="${userWeb.verified}"></td>
+                    <td style="white-space: nowrap">
+                        <a class="btn btn-primary btn-sm"
+                            th:href="@{'/users/edit/{id=${user.id}}'}">Edit</a>
+                        <a class="btn btn-danger btn-sm"
+                            th:href="@{'/users/delete/{id=${user.id}}'}"
+                            onclick="return confirm('¿Seguro que quieres eliminar este usuario ${user.id}?')" >Delete</a>
+
+                </tr>
+            </tbody>-->
+        </table>
+            </div>
+        <button class="return-btn" onclick="window.location.href='/vivacventures/menu'">Volver</button>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+        function getAccessToken() {
+            return localStorage.getItem('accessToken');
+        }
+
+        var editingRow = null;
+        var originalValues = {};
+
+        $(document).ready(function() {
+            function filterTable() {
+                var idFilter = $('#filterId').val().toLowerCase();
+                var usernameFilter = $('#filterUsername').val().toLowerCase();
+                var emailFilter = $('#filterEmail').val().toLowerCase();
+                var rolFilter = $('#filterRol').val().toLowerCase();
+                var verifiedFilter = $('#filterVerified').val().toLowerCase();
+
+                $('#userTableBody tr').filter(function() {
+                    $(this).toggle(
+                        ($(this).find('td').eq(0).text().toLowerCase().indexOf(idFilter) > -1) &&
+                        ($(this).find('td').eq(1).text().toLowerCase().indexOf(usernameFilter) > -1) &&
+                        ($(this).find('td').eq(2).text().toLowerCase().indexOf(emailFilter) > -1) &&
+                        (rolFilter === "" || $(this).find('td').eq(3).text().toLowerCase() === rolFilter) &&
+                        (verifiedFilter === "" || $(this).find('td').eq(4).text().toLowerCase() === verifiedFilter)
+                    );
+                });
+            }
+
+            $('#filterId, #filterUsername, #filterEmail, #filterRol, #filterVerified').on('keyup change', filterTable);
+
+            $.ajax({
+                type: 'GET',
+                url: '/vivacventures/api/users',
+                headers: {
+                    'Authorization': 'Bearer ' + getAccessToken()
+                },
+                success: function(users) {
+                    var userTableBody = $('#userTableBody');
+                    userTableBody.empty();
+
+                    users.forEach(function(user) {
+                        var row = '<tr data-id="' + user.id + '">' +
+                            '<td>' + user.id + '</td>' +
+                            '<td class="editable username">' + user.username + '</td>' +
+                            '<td>' + user.email + '</td>' +
+                            '<td class="rol">' + user.rol + '</td>' +
+                            '<td class="verified">' + user.verified + '</td>' +
+                            '<td style="white-space: nowrap">' +
+                            // '<a class="btn btn-primary btn-sm btn-spacing edit-btn" href="#">Edit</a>' +
+                            // '<a class="btn btn-success btn-sm btn-spacing confirm-btn" href="#" style="display: none;">Confirm</a>' +
+                            // '<a class="btn btn-warning btn-sm btn-spacing cancel-btn" href="#" style="display: none;">Cancel</a>' +
+                            '<button class="btn btn-primary btn-sm btn-spacing edit-btn">Edit</button>' +
+                            '<button class="btn btn-success btn-sm btn-spacing confirm-btn" style="display:none;">Confirm</button>' +
+                            '<button class="btn btn-warning btn-sm btn-spacing cancel-btn" style="display:none;">Cancel</button>' +
+                            '<a class="btn btn-danger btn-sm" href="/users/delete/' + user.id + '" onclick="return confirm(\'¿Seguro que quieres eliminar este usuario ' + user.id + '?\')">Delete</a>' +
+                            '</td>' +
+                            '</tr>';
+                        userTableBody.append(row);
+                    });
+
+                    attachEventListeners();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar los usuarios: ", error);
+                }
+            });
+
+            function attachEventListeners() {
+                $('.edit-btn').on('click', function() {
+                    var row = $(this).closest('tr');
+
+                    if (editingRow && editingRow !== row[0]) {
+                        cancelEdit($(editingRow));
+                    }
+
+                    editingRow = row[0];
+
+                    originalValues = {
+                        username: row.find('.username').text(),
+                        rol: row.find('.rol').text(),
+                        verified: row.find('.verified').text()
+                    };
+
+                    row.find('.username').html('<input type="text" class="form-control edit-input username" value="' + originalValues.username + '">');
+                    row.find('.rol').html('<select class="form-control edit-input rol"><option value="USER"' + (originalValues.rol === 'USER' ? ' selected' : '') + '>USER</option><option value="ADMIN"' + (originalValues.rol === 'ADMIN' ? ' selected' : '') + '>ADMIN</option></select>');
+                    row.find('.verified').html('<select class="form-control edit-input verified"><option value="true"' + (originalValues.verified === 'true' ? ' selected' : '') + '>True</option><option value="false"' + (originalValues.verified === 'false' ? ' selected' : '') + '>False</option></select>');
+
+                    row.find('.edit-btn').hide();
+                    row.find('.confirm-btn, .cancel-btn').show();
+                });
+
+                $('.confirm-btn').on('click', function() {
+                    var row = $(this).closest('tr');
+                    var userId = row.data('id');
+                    var updatedUser = {
+                        username: row.find('.username input').val(),
+                        rol: row.find('.rol select').val(),
+                        verified: row.find('.verified select').val() === 'true'
+                    };
+
+                    if (confirm('¿Estás seguro de que quieres guardar los cambios?')) {
+                        $.ajax({
+                            type: 'PUT',
+                            url: '/vivacventures/api/users/' + userId,
+                            headers: {
+                                'Authorization': 'Bearer ' + getAccessToken(),
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify(updatedUser),
+                            success: function(response) {
+                                alert('Usuario actualizado correctamente.');
+                                endEdit(row, updatedUser);
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Error al actualizar el usuario: ' + error);
+                                cancelEdit(row); // Opcionalmente restablecer valores en caso de error
+                            }
+                        });
+                    }
+                });
+
+                $('.cancel-btn').on('click', function() {
+                    var row = $(this).closest('tr');
+                    cancelEdit(row);
+                });
+            }
+
+            function endEdit(row, updatedUser) {
+                row.find('.username').text(updatedUser.username);
+                row.find('.rol').text(updatedUser.rol);
+                row.find('.verified').text(updatedUser.verified);
+                row.find('.edit-btn').show();
+                row.find('.confirm-btn, .cancel-btn').hide();
+                editingRow = null;
+            }
+
+            function cancelEdit(row) {
+                row.find('.username').text(originalValues.username);
+                row.find('.rol').text(originalValues.rol);
+                row.find('.verified').text(originalValues.verified);
+                row.find('.edit-btn').show();
+                row.find('.confirm-btn, .cancel-btn').hide();
+                editingRow = null;
+            }
+        });
+    </script>
+
+
+
+</body>
+</html>
