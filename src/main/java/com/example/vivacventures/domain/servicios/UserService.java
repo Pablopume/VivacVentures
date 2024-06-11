@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,6 +68,11 @@ public class UserService {
             user.setTemporalPassword(passwordEncoder.encode(randomString));
             userRepository.save(user);
     }
+@Transactional
+    public void delete(int id) {
+userRepository.deleteById(id);
+
+    }
 
     public boolean register(UserRegisterDTO userRegisterDTO) {
         if (userRegisterDTO.getEmail() == null || !userRegisterDTO.getEmail().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
@@ -89,7 +95,7 @@ public class UserService {
                     mandarMail.generateAndSendEmail(userEntity.getEmail(),
                             "<html><body><a href=\"" + url + "\">Pulse para autenticar usuario</a></body></html>", "VivacVentures. Autenticación de Usuario");
                 } catch (MessagingException e) {
-                    throw new RuntimeException(e);
+                   throw new RuntimeException(e);
                 }
                 userRepository.save(userEntity);
                 return true;

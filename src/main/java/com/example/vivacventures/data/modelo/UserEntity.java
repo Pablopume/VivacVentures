@@ -34,19 +34,19 @@ public class UserEntity {
     @Column(name = "random_string_verified", length = 255)
     private String randomStringVerified;
     @Column(name = "valorations")
-    @OneToMany(mappedBy = "userEntity")
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE)
     private List<ValorationEntity> valorations;
     @Column(name = "temporalPassword")
     private String temporalPassword;
-    @OneToMany(mappedBy = "requester")
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.REMOVE)
     private List<AmigoEntity> amigos;
-    @OneToMany(mappedBy = "requested")
+    @OneToMany(mappedBy = "requested", cascade = CascadeType.REMOVE)
     private List<AmigoEntity> amigos2;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<ListaEntity> listasCreadas;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<ListaUserEntity> listasAcceso;
 
     public UserEntity(int id) {
