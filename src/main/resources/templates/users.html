@@ -13,8 +13,8 @@
     <style>
         .return-btn {
             margin-top: 20px;
-            background-color: #FFA500;
-            color: white;
+            background-color: #83CC7A; /* Color secundario */
+            color: #FFFFFF; /* Color terciario */
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -23,41 +23,52 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         .table-container {
-            border: 1px solid #0000FF;
+            border: 1px solid #027B76; /* Color primario */
             padding: 15px;
             border-radius: 8px;
-            background-color: #f9f9f9;
+            background-color: #FFFFFF; /* Color terciario */
         }
-
         table {
             border-collapse: separate;
             border-spacing: 0;
             width: 100%;
         }
-
         table th, table td {
-            border-right: 1px solid #0000FF;
+            border-right: 1px solid #027B76; /* Color primario */
         }
-
         table th:last-child, table td:last-child {
             border-right: none;
         }
-
         .btn-spacing {
             margin-right: 15px;
         }
-
         .table th, .table td {
             text-align: center;
             vertical-align: middle;
+        }
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .spinner-border {
+            width: 25rem;
+            height: 20rem;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container" id="userList">
+<div id="spinner" class="spinner-container">
+    <img th:src="@{/images/loading.gif}" alt="Loading..." class="spinner-border">
+</div>
+
+<div class="container hidden" id="userList">
     <h1>Users</h1>
 
     <div class="table-container">
@@ -168,6 +179,9 @@
                             '</tr>';
                         userTableBody.append(row);
                     });
+
+                    $('#spinner').addClass('hidden');
+                    $('#userList').removeClass('hidden');
 
                     attachEventListeners();
                 },

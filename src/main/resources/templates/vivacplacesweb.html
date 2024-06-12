@@ -10,10 +10,10 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
         .table-container {
-            border: 1px solid #008000;
+            border: 1px solid #027B76; /* Color primario */
             padding: 15px;
             border-radius: 8px;
-            background-color: #f9f9f9;
+            background-color: #FFFFFF; /* Color terciario */
         }
         table {
             border-collapse: separate;
@@ -21,8 +21,8 @@
             width: 100%;
         }
         table th, table td {
-            border-right: 1px solid #008000;
-            border-bottom: 1px solid #008000;
+            border-right: 1px solid #027B76; /* Color primario */
+            border-bottom: 1px solid #027B76; /* Color primario */
             padding: 8px;
         }
         table th:last-child, table td:last-child {
@@ -30,8 +30,8 @@
         }
         .return-btn {
             margin-top: 20px;
-            background-color: #FFA500;
-            color: white;
+            background-color: #83CC7A; /* Color secundario */
+            color: #FFFFFF; /* Color terciario */
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -84,7 +84,7 @@
             height: auto;
         }
         .close-popup {
-            color: #fff;
+            color: #c83131;
             position: absolute;
             top: 10px;
             right: 25px;
@@ -95,7 +95,7 @@
         }
         .close-popup:hover,
         .close-popup:focus {
-            color: #bbb;
+            color: #ea0c0c;
             text-decoration: none;
             cursor: pointer;
         }
@@ -106,7 +106,7 @@
             height: 100vh;
         }
         .spinner-border {
-            width: 20rem;
+            width: 25rem;
             height: 20rem;
         }
         .hidden {
@@ -115,15 +115,10 @@
     </style>
 </head>
 <body>
-<!--<div id="spinner" class="spinner-container">
-    <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-    </div>
-</div>-->
+
 <div id="spinner" class="spinner-container">
     <img th:src="@{/images/loading.gif}" alt="Loading..." class="spinner-border">
 </div>
-
 
 <div id="vivacPlaceList" class="container hidden">
     <h1>Vivac Places</h1>
