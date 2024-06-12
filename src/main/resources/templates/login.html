@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>Inicio de sesión</title>
+    <title>VivacVentur</title>
     <link rel="icon" th:href="@{/images/favicon.png}" type="image/png">
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -67,7 +67,7 @@
                 </div>
             </form>
             <div class="form-group">
-                <span>Si eres nuevo usuario <a th:href="@{/registro}">regístrate aqui</a></span>
+                <span>Si eres nuevo usuario <a th:href="@{/web/registro}">regístrate aqui</a></span>
             </div>
 
         </div>
@@ -83,10 +83,6 @@
         crossorigin="anonymous"></script>
 
 <script>
-    function getAccessToken() {
-        return localStorage.getItem('accessToken');
-    }
-
     $(document).ready(function() {
         $('#loginForm').on('submit', function(event) {
             event.preventDefault();
@@ -104,20 +100,6 @@
                         localStorage.setItem('refreshToken', response.refreshToken);
 
                         window.location.href = 'menu';
-                        // window.location.href = 'getusers';
-                        // $.ajax({
-                        //     type: 'GET',
-                        //     url: '/vivacventures/users',
-                        //     headers: {
-                        //         'Authorization': 'Bearer ' + getAccessToken()
-                        //     },
-                        //     success: function(users) {
-                        //         window.location.href = 'users';
-                        //     },
-                        //     error: function(xhr, status, error) {
-                        //         alert('Error al obtener los usuarios: ' + error);
-                        //     }
-                        // });
                     } catch (e) {
                         console.error("Error procesando la respuesta: ", e);
                     }

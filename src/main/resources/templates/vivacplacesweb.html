@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Vivac Places</title>
+    <title>VivacVentur</title>
     <link rel="icon" th:href="@{/images/favicon.png}" type="image/png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcwwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -10,7 +10,7 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
         .table-container {
-            border: 1px solid #008000; /* Green border for the table */
+            border: 1px solid #008000;
             padding: 15px;
             border-radius: 8px;
             background-color: #f9f9f9;
@@ -50,13 +50,9 @@
         .table img {
             max-width: 80px;
             max-height: 80px;
-            cursor: pointer; /* Show pointer cursor on hover */
-            display: block; /* Make images block elements */
-            margin-bottom: 10px; /* Add space between images */
-        }
-        .modal-content {
-            max-width: 800px;
-            margin: 30px auto;
+            cursor: pointer;
+            display: block;
+            margin-bottom: 10px;
         }
         .modal-body img {
             display: block;
@@ -119,10 +115,13 @@
     </style>
 </head>
 <body>
-<div id="spinner" class="spinner-container">
+<!--<div id="spinner" class="spinner-container">
     <div class="spinner-border text-primary" role="status">
         <span class="sr-only">Loading...</span>
     </div>
+</div>-->
+<div id="spinner" class="spinner-container">
+    <img th:href="@{/images/loading.gif}" alt="Loading..." class="spinner-border">
 </div>
 
 
@@ -159,14 +158,12 @@
             </tr>
             </thead>
             <tbody id="vivacPlaceTableBody">
-            <!-- Los lugares se añadirán aquí con JavaScript -->
             </tbody>
         </table>
     </div>
-    <button class="return-btn" onclick="window.location.href='/vivacventures/menu'">Volver</button>
+    <button class="return-btn" onclick="window.location.href='menu'">Volver</button>
 </div>
 
-<!-- Modal para mostrar la imagen en grande -->
 <div class="popup" id="popup-1">
     <div class="popup-content">
         <img class="popup-img" src="" alt="Popup Image">
@@ -182,8 +179,11 @@
         return localStorage.getItem('accessToken');
     }
 
+    function getRefreshToken() {
+        return localStorage.getItem('refreshToken');
+    }
+
     $(document).ready(function() {
-        // Función para filtrar la tabla
         function filterTable() {
             var idFilter = $('#filterId').val().toLowerCase();
             var nameFilter = $('#filterName').val().toLowerCase();
@@ -204,68 +204,134 @@
             });
         }
 
-        // Evento para activar el filtro al cambiar o escribir en los campos de filtro
         $('#filterId, #filterName, #filterType, #filterUsername, #filterVisible, #filterValorations').on('keyup change', filterTable);
 
-        // Obtener datos de los lugares al cargar la página
-        $.ajax({
-            type: 'GET',
-            url: '/vivacventures/getvivacplacesweb',
-            headers: {
-                'Authorization': 'Bearer ' + getAccessToken()
-            },
-            success: function(places) {
-                console.log(places);  // Verificar que los datos están llegando correctamente
-                var vivacPlaceTableBody = $('#vivacPlaceTableBody');
-                vivacPlaceTableBody.empty();  // Limpiar la tabla antes de añadir los datos
+        function getVivacPlaces() {
+            $.ajax({
+                type: 'GET',
+                url: '/vivacventures/getvivacplacesweb',
+                headers: {
+                    'Authorization': 'Bearer ' + getAccessToken()
+                },
+                success: function(places) {
+                    console.log(places);
+                    var vivacPlaceTableBody = $('#vivacPlaceTableBody');
+                    vivacPlaceTableBody.empty();
 
-                places.forEach(function(place) {
-                    // Crear la lista de imágenes HTML
-                    var imagesHtml = '';
-                    place.images.forEach(function(image) {
-                        imagesHtml += '<img class="img-thumbnail popup-trigger" src="' + image + '" alt="Image">';
+                    places.forEach(function(place) {
+                        var imagesHtml = '';
+                        place.images.forEach(function(image) {
+                            imagesHtml += '<img class="img-thumbnail popup-trigger" src="' + image + '" alt="Image">';
+                        });
+
+                        var row = '<tr data-id="' + place.id + '">' +
+                            '<td>' + place.id + '</td>' +
+                            '<td>' + place.name + '</td>' +
+                            '<td>' + place.type + '</td>' +
+                            '<td>' + place.username + '</td>' +
+                            '<td class="visible">' + place.visible + '</td>' +
+                            '<td>' + place.mediaValorations + '</td>' +
+                            '<td>' + imagesHtml + '</td>' +
+                            '<td style="white-space: nowrap">' +
+                            '<button class="btn btn-success btn-sm btn-spacing visible-btn">Visible</button>' +
+                            '<button class="btn btn-danger btn-sm delete-btn">Delete</button>' +
+                            '</td>' +
+                            '</tr>';
+                        vivacPlaceTableBody.append(row);
                     });
 
-                    // Crear la fila de la tabla
-                    var row = '<tr data-id="' + place.id + '">' +
-                        '<td>' + place.id + '</td>' +
-                        '<td>' + place.name + '</td>' +
-                        '<td>' + place.type + '</td>' +
-                        '<td>' + place.username + '</td>' +
-                        '<td>' + place.visible + '</td>' +
-                        '<td>' + place.mediaValorations + '</td>' +
-                        '<td>' + imagesHtml + '</td>' +
-                        '<td>' +
-                        '<button class="btn btn-primary btn-sm btn-spacing edit-btn">Edit</button>' +
-                        '<button class="btn btn-danger btn-sm btn-spacing delete-btn">Delete</button>' +
-                        '</td>' +
-                        '</tr>';
-                    vivacPlaceTableBody.append(row);
-                });
+                    $('.visible-btn').on('click', function () {
+                        var row = $(this).closest('tr');
+                        var placeId = row.data('id');
 
-                // Mostrar la imagen en grande al hacer clic en ella
-                $('.popup-trigger').on('click', function() {
-                    var imageUrl = $(this).attr('src');
-                    $('#popup-1 img').attr('src', imageUrl);
-                    $('.popup').fadeIn();
-                });
+                        $.ajax({
+                            type: 'PUT',
+                            url: '/vivacventures/updateVisible/' + placeId,
+                            headers: {
+                                'Authorization': 'Bearer ' + getAccessToken()
+                            },
+                            success: function (response) {
+                                var cell = row.find('.visible'); // Asegúrate de que esta clase coincide con la clase de la celda "Visible"
+                                var isVisible = cell.text() === 'true';
+                                cell.text(isVisible ? 'false' : 'true'); // Cambia el contenido de la celda
 
-                // Ocultar la ventana emergente al hacer clic en la "x"
-                $('.close-popup').on('click', function() {
-                    $('.popup').fadeOut();
-                });
+                                alert('Vivacplace editado correctamente.');
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error al editar el vivacplace: ' + error);
+                            }
+                        });
 
-                $('#spinner').addClass('hidden');
-                $('#vivacPlaceList').removeClass('hidden');
-            },
-            error: function(xhr, status, error) {
-                if (xhr.status === 403) {
-                    window.location.href = '/vivacventures/error401';
-                } else {
-                    console.error("Error al cargar los lugares: ", error);
+                    });
+
+                    $('.delete-btn').on('click', function () {
+                        var row = $(this).closest('tr');
+                        var placeId = row.data('id');
+
+                        if (confirm('¿Seguro que quieres eliminar este vivacplace ' + placeId + '?')) {
+                            $.ajax({
+                                type: 'DELETE',
+                                url: '/vivacventures/delete/' + placeId,
+                                headers: {
+                                    'Authorization': 'Bearer ' + getAccessToken()
+                                },
+                                success: function (response) {
+                                    alert('Vivacplace eliminado correctamente.');
+                                    row.remove();
+                                },
+                                error: function (xhr, status, error) {
+                                    alert('Error al eliminar el vivacplace: ' + error);
+                                }
+                            });
+                        }
+                    });
+
+                    $('.popup-trigger').on('click', function() {
+                        var imageUrl = $(this).attr('src');
+                        $('#popup-1 img').attr('src', imageUrl);
+                        $('.popup').fadeIn();
+                    });
+
+                    $('.close-popup').on('click', function() {
+                        $('.popup').fadeOut();
+                    });
+
+                    $('#spinner').addClass('hidden');
+                    $('#vivacPlaceList').removeClass('hidden');
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 403) {
+                        window.location.href = 'error403';
+                    } else if (xhr.status === 401) {
+                        alert("Token Expired", error);
+                        refreshTokensAndReloadPlaces();
+                    } else {
+                        alert("Error al cargar los lugares: ", error);
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        function refreshTokensAndReloadPlaces() {
+            $.ajax({
+                type: 'GET',
+                url: '/vivacventures/auth/refreshToken',
+                data: {
+                    'refreshToken': getRefreshToken()
+                },
+                success: function(response) {
+                    localStorage.setItem('accessToken', response.accessToken);
+                    localStorage.setItem('refreshToken', response.refreshToken);
+                    getVivacPlaces();
+                },
+                error: function(xhr, status, error) {
+                    alert("Error al refrescar el token: ", error);
+                }
+            });
+        }
+
+        getVivacPlaces();
+
     });
 </script>
 </body>

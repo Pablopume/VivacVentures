@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Error 401 - Página Privada</title>
+    <title>VivacVentur</title>
     <link rel="icon" th:href="@{/images/favicon.png}" type="image/png">
     <style>
         body {
@@ -10,14 +10,14 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #d4edda;
+            color: #155724;
             font-family: Arial, sans-serif;
         }
         .container {
             text-align: center;
-            border: 1px solid #f5c6cb;
-            background-color: #f8d7da;
+            border: 1px solid #c3e6cb;
+            background-color: #d4edda;
             padding: 20px;
             border-radius: 8px;
         }
@@ -27,6 +27,19 @@
         }
         .container p {
             font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .container button {
+            background-color: #7EC74C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container button:hover {
+            background-color: #6bb43e;
         }
     </style>
 </head>
@@ -34,6 +47,13 @@
 <div class="container">
     <h1>Error 403</h1>
     <p>Página privada. No tienes autorización para acceder a esta página.</p>
+    <button onclick="goToLogin()">Volver a Login</button>
 </div>
+
+<script>
+    function goToLogin() {
+        window.location.href = 'login';
+    }
+</script>
 </body>
 </html>

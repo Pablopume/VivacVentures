@@ -173,13 +173,11 @@ public class VivacPlaceService {
 
 
     public List<VivacPlaceWeb> getVivacPlacesWeb() {
-        return vivacPlaceRepository.findAllWithVivacPlaceEntity().stream().map(vivacPlaceEntity -> {
+        return vivacPlaceRepository.findAllWithVivacPlaceEntityWeb().stream().map(vivacPlaceEntity -> {
                     VivacPlaceWeb vivacPlaceWeb = mapperService.toVivacPlaceWeb(vivacPlaceEntity);
 
-                    // Obtener las valoraciones para este lugar
                     List<ValorationEntity> valorations = valorationRepository.findByVivacPlaceEntity(vivacPlaceEntity);
                     if (!valorations.isEmpty()) {
-                        // Calcular la media de las valoraciones
                         double mediaValorations = valorations.stream()
                                 .mapToDouble(ValorationEntity::getScore)
                                 .average()
@@ -187,10 +185,8 @@ public class VivacPlaceService {
                         vivacPlaceWeb.setMediaValorations(mediaValorations);
                     }
 
-                    // Obtener las URLs de las imágenes para este lugar
                     List<ImageEntity> images = imageRepository.getByVivacPlaceEntity(vivacPlaceEntity.getId());
                     if (!images.isEmpty()) {
-                        // Obtener las URLs de las imágenes y agregarlas a la lista
                         List<String> imageUrls = images.stream()
                                 .map(ImageEntity::getUrl)
                                 .collect(toList());
@@ -201,6 +197,17 @@ public class VivacPlaceService {
                 }
         ).collect(toList());
 
+    }
+
+    public void updateVisibleVivacPlace(int id) {
+        VivacPlaceEntity vivacPlaceEntity = vivacPlaceRepository.getVivacPlaceEntitiesById(id);
+
+        if (vivacPlaceEntity == null) {
+            throw new NoExisteException("No existe el lugar");
+        }
+
+        boolean visible = !vivacPlaceEntity.isVisible();
+        vivacPlaceRepository.updateByVisible(id, visible);
     }
 
 

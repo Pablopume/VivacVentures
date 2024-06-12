@@ -46,7 +46,6 @@ public class VivacPlaceRest {
         return vivacPlaceService.getVivacPlaceByUsername(username);
     }
 
-
     @PostMapping("/vivacplace")
     @Secured("ROLE_USER")
     public VivacPlace saveVivacPlace(@RequestBody VivacPlace vivacPlace) {
@@ -58,12 +57,6 @@ public class VivacPlaceRest {
     public boolean updateVivacPlace(@RequestBody VivacPlace vivacPlace) {
         return vivacPlaceService.updateVivacPlace(vivacPlace);
     }
-
-//    @GetMapping("/vivacplaces/id/{id}")
-    //   @Secured("ROLE_USER")
-    //  public VivacPlace getVivacPlacesById(@PathVariable int id) {
-    //    return vivacPlaceService.getVivacPlaceById(id);
-    //   }
 
     @GetMapping("/vivacplaces/id/{id}")
     @Secured("ROLE_USER")
@@ -82,4 +75,11 @@ public class VivacPlaceRest {
     public List<VivacPlaceWeb> getVivacPlacesWeb() {
         return vivacPlaceService.getVivacPlacesWeb();
     }
+
+    @PutMapping("/updateVisible/{id}")
+    @Secured("ROLE_ADMIN")
+    public void toggleVisibility(@PathVariable int id) {
+        vivacPlaceService.updateVisibleVivacPlace(id);
+    }
+
 }
