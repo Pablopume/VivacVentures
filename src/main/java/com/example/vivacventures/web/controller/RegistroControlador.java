@@ -42,15 +42,6 @@ public class RegistroControlador {
 	public AdminRegisterDTO userRegisterAdminDTO() {
 		return new AdminRegisterDTO();
 	}
-//
-//	@ModelAttribute("userWeb")
-//	public UserWeb userWeb() {
-//		return new UserWeb();
-//	}
-//	@ModelAttribute("vivacPlaceWeb")
-//	public VivacPlaceWeb vivacPlaceWeb() {
-//		return new VivacPlaceWeb();
-//	}
 
 	@GetMapping("/vivacplacesweb")
 	public String vivacplaces() {
