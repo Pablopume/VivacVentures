@@ -10,7 +10,6 @@ import com.example.vivacventures.domain.modelo.dto.UserRegisterDTO;
 import com.example.vivacventures.domain.modelo.dto.UserUpdateDTO;
 import com.example.vivacventures.domain.modelo.exceptions.*;
 import com.example.vivacventures.util.Utils;
-import com.example.vivacventures.web.domain.model.UserSummaryDTO;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,10 +67,9 @@ public class UserService {
             user.setTemporalPassword(passwordEncoder.encode(randomString));
             userRepository.save(user);
     }
-@Transactional
+    @Transactional
     public void delete(int id) {
-userRepository.deleteById(id);
-
+        userRepository.deleteById(id);
     }
 
     public boolean register(UserRegisterDTO userRegisterDTO) {

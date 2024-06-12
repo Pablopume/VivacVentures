@@ -25,6 +25,9 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
     @Query("SELECT v FROM  VivacPlaceEntity v WHERE v.visible = true")
     List<VivacPlaceEntity> findAllWithVivacPlaceEntity();
 
+    @Query("SELECT v FROM  VivacPlaceEntity v ")
+    List<VivacPlaceEntity> findAllWithVivacPlaceEntityWeb();
+
     @Query(value = "SELECT vp.id, vp.name, vp.type, AVG(vr.score) as valorations, (SELECT url FROM image WHERE vivac_id = vp.id LIMIT 1) as images, (SELECT COUNT(*) FROM favorito f INNER JOIN lista l ON f.lista_id = l.id INNER JOIN lista_user lu ON l.id = lu.lista_id INNER JOIN user u ON lu.user_id = u.id WHERE u.username = :username AND f.vivac_place_id = vp.id) > 0 as isFavorite FROM vivac_place vp LEFT JOIN valoration vr ON vp.id = vr.vivac_id  WHERE vp.visible = 1 GROUP BY vp.id ORDER BY ST_Distance(point(vp.latitude, vp.longitude), point(:userLatitude, :userLongitude))*111.32", nativeQuery = true)
     List<Object[]> findNearbyPlacesAndUser(@Param("userLatitude") double userLatitude, @Param("userLongitude") double userLongitude, @Param("username") String username);
 
@@ -68,6 +71,10 @@ public interface VivacPlaceRepository extends ListCrudRepository<VivacPlaceEntit
             """)
     void updateVivacPlaceEntitie(String name, String type, String description, double latitude, double longitude, String username, int capacity, LocalDate date, double price, int id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE VivacPlaceEntity vp SET vp.visible = :visible WHERE vp.id = :id")
+    void updateByVisible(int id, boolean visible);
 
 
 }
